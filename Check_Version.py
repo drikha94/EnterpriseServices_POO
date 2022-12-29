@@ -19,6 +19,7 @@ class Version:
         if ver == "v_uno":
 
             patterns = {
+                'id': 1,
                 'inter': {
                     'p_vpn': ['ip vrf ', 'vrf '],
                     'r_vpn': ['ip vrf forwarding ', 'vrf forwarding '],
@@ -38,12 +39,29 @@ class Version:
                 },
                 'vpn': {
                     'p_vpn': ["ip vrf ", "vrf definition "],
+                    'p_rd': ['rd'],
+                    'r_rd': ["rd "],
+                    'p_rte': ["route-target export"],
+                    'r_rte': ["route-target export"],
+                    'p_rti': ["route-target import"],
+                    'r_rti': ["route-target import"],
+                    'p_descrip': ["description"],
+                    'r_descrip': ["description "],
+                    'p_map': ['map']
+                },
+                'routes': {
+                    'p_routes': ['ip route ']
+                },
+                'bgp': {
+                    'p_vpn': ['vrf ', 'address-family ipv4 vrf '],
+
                 }
             }
 
         if ver == "v_dos":
 
             patterns = {
+                'id': 2,
                 'inter': {
                     'p_vpn': ['vrf', ''],
                     'r_vpn': ['vrf', ''],
@@ -62,7 +80,22 @@ class Version:
                     'p_ipv6': ['ipv6']
                 },
                 'vpn': {
-                    'p_vpn': ["vrf ", "vrf definition "]
+                    'p_vpn': ["vrf ", "vrf definition "],
+                    'p_rd': ['rd'],
+                    'r_rd': ["rd "],
+                    'p_rte': ["export route-target"],
+                    'r_rte': ["export route-target"],
+                    'p_rti': ["import route-target"],
+                    'r_rti': ["import route-target"],
+                    'p_descrip': ["description"],
+                    'r_descrip': ["description "],
+                    'p_map': ['map']
+                },
+                'routes': {
+                    'p_routes': ['router static']
+                },
+                'bgp': {
+                    'p_vpn': ['vrf ', 'address-family ipv4 vrf ']
                 }
             }
 

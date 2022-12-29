@@ -1,16 +1,16 @@
 import re
 from tkinter import messagebox
 
-def filter_block(core_list, first_line, data_type):
+def filter_block(list, first_line, data_type, break_point):
 
     block = []
-    print(first_line)
+    #print(first_line)
     if first_line != []:
        
-        first_index = int(core_list.index(first_line[0]))
-        for x in range(first_index, len(core_list)):
-            block.append(core_list[x])
-            if re.findall("!", core_list[x]) and core_list[x] == "!":
+        first_index = int(list.index(first_line[0]))
+        for x in range(first_index, len(list)):
+            block.append(list[x])
+            if re.findall("!", list[x]) and list[x] == break_point:
                 break
     else:
         messagebox.showinfo("Warning", "The legacy interface was not found")

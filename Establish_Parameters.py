@@ -13,5 +13,15 @@ parameters = {
         'STATUS': '',
         'IPV6': '',
         'REF': ''
+    },
+    'VPN': {
+        'RD': '',
+        'RTE': '',
+        'RTI': '',
+        'DESCRIP': '',
+        'MAP': ''
+    },
+    'BGP': {
+        
     }
 }
