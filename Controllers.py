@@ -24,8 +24,6 @@ class Controller:
         block_list = filter_block(self.core_list, find_interface, data_type, '!')
         interface = Get_Interface_Data()
         interface.get_data(self.parameters, block_list, self.patterns)
-        #print(block_list)
-        #print(self.parameters)
 
     def vpn_parameters(self):
 
@@ -71,28 +69,31 @@ class Controller:
 
     def bgp_parameters(self):
 
-        data_type = 'bgp'
+        data_type = 'bgp_one'
         vpn = self.parameters['INTER']['VPN']
         first_line = list((filter(lambda x: "router bgp " in x, self.core_list)))
-        block_list = filter_block(self.core_list, first_line, data_type, '!')
+        block_list = filter_block(self.core_list, first_line, data_type, '!')  if first_line != [] else []
 
-        if self.parameters['INTER']['VPN'] != "":
+        data_type = 'bgp_two'
+        bgp_obj = Get_bgp_data()
+        confirmation = bgp_obj.first_filter(self.parameters, block_list, self.patterns)
+        bgp_obj.get_possible_peers(self.parameters)
 
-            first_line_two = list(filter(lambda x: self.patterns['bgp']['p_vpn'][0] + vpn in x, block_list))
-            if first_line_two != []:
-                first_line_two_string = "".join(first_line_two[0]).strip()
-                if first_line_two_string == "address-family ipv4 vrf " + vpn or first_line_two_string == "vrf " + vpn:
-                    block_list_peer = filter_block(block_list, first_line_two, data_type, ' !')
+        bgp_without_vpn_block = filter_block(block_list, confirmation, data_type, 'vrf') if block_list != [] else []
+        if confirmation != False and self.parameters['INTER']['VPN'] != '':
+            bgp_with_vpn_block = filter_block(block_list, confirmation, data_type, '!')
+            bgp_obj.get_bgp_with_vpn(self.parameters, bgp_with_vpn_block)
+
+        bgp_obj.get_routes_with_vpn(self.parameters, self.block_routes)
         
-        
-
-            bgp_obj = Get_bgp_data()
-            bgp_obj.get_data(self.parameters)
-
+   
+        #bgp_obj.get_data_with_vpn()
+        #bgp_obj.get_data_without_vpn()
 
 
-
-
+        #print(bgp_vpn_block)
+            #bgp_obj = Get_bgp_data()
+            #bgp_obj.get_data(self.parameters, bgp_vpn_block, self.block_routes)
         #print(block_list)
         #print(self.parameters)
 
@@ -100,7 +101,7 @@ class Controller:
 
 
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
-core_int = "GigabitEthernet9/17.786100"
+core_int = "GigabitEthernet9/17.1729101"
 
 path_v2 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Octubre/Bahia Blanca/Old device/CORE-BHB9.gics.ar.telefonica.com-2022-09-30_02_14_52.txt"
 core_int_v2 = "0/0/1/15.4040"
