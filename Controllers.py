@@ -1,10 +1,12 @@
 from Get_Interface_Data_ import Get_Interface_Data
 from Get_Vpn_Data import Get_vpn_data
 from Get_Bgp_Data import Get_bgp_data
-from Filter_Block import filter_block
+from Filter_Block import Filter_blocks
 from Check_Version import version
 from Open_File import open_txt
 from Establish_Parameters import parameters
+from Get_Routes_data import Get_routes_data
+from Get_Possible_Peers import Get_peers_data
 
 class Controller:
 
@@ -15,57 +17,39 @@ class Controller:
         self.core_list = open_txt(self.path)
         self.patterns = version.check_version(self.core_list)
         self.parameters = parameters
-        self.block_routes = ""
+        self.possible_peers = []
+        self.filter = Filter_blocks()
+        self.interface = Get_Interface_Data()
+        self.vpn = Get_vpn_data()
+        self.routes = Get_routes_data()
+        self.peers = Get_peers_data()
 
     def interface_parameters(self):
 
-        data_type = 'interface'
-        find_interface = list(filter(lambda linea: self.core_interface in linea, self.core_list))
-        block_list = filter_block(self.core_list, find_interface, data_type, '!')
-        interface = Get_Interface_Data()
-        interface.get_data(self.parameters, block_list, self.patterns)
+        block_list = self.filter.interface_filter(self.core_interface, self.core_list)
+        self.interface.get_data(self.parameters, block_list, self.patterns)
+        #print(self.parameters)
 
     def vpn_parameters(self):
 
-        data_type = 'vpn'
-        vpn = self.parameters['INTER']['VPN']
+        if self.parameters['INTER']['VPN'] != "":
+            block_list = self.filter.vpn_filter(self.parameters, self.patterns, self.core_list)
+            self.vpn.get_data(self.parameters, block_list, self.patterns)
+            #print(self.parameters)
 
-        first_line = list(filter(lambda linea: self.patterns['vpn']['p_vpn'][0] + vpn in linea, self.core_list))
-        if first_line == []:
-            first_line = list(filter(lambda linea: self.patterns['vpn']['p_vpn'][1] + vpn in linea, self.core_list))
+    def peers_parameters(self):
 
-        if vpn != "":
-
-            block_list = filter_block(self.core_list, first_line, data_type, '!')
-            if (block_list[0] == self.patterns['vpn']['p_vpn'][0] + vpn) or (block_list[0] == self.patterns['vpn']['p_vpn'][1] + vpn):
-
-                if self.patterns['id'] == 1:
-
-                    vpn_obj = Get_vpn_data()
-                    vpn_obj.get_data_v_one(self.parameters, block_list, self.patterns)
-
-                if self.patterns['id'] == 2:
-
-                    rte_first_line = list(filter(lambda x: self.patterns['vpn']['p_rte'][0] in x, block_list))
-                    rti_first_line = list(filter(lambda x: self.patterns['vpn']['p_rti'][0] in x, block_list))
-                    rte_block_list = filter_block(block_list, rte_first_line, data_type, '  !')
-                    rti_block_list = filter_block(block_list, rti_first_line, data_type, '  !')
-                    vpn_obj = Get_vpn_data()
-                    vpn_obj.get_data_v_two(self.parameters, block_list, self.patterns, 'any')
-                    vpn_obj.get_data_v_two(self.parameters, rte_block_list, self.patterns, 'rte_block')
-                    vpn_obj.get_data_v_two(self.parameters, rti_block_list, self.patterns, 'rti_block')
+        if self.parameters['INTER']['IP'] != "":
+            block_list = self.peers.get_data(self.parameters)
+            self.possible_peers = block_list
 
     def routes_parameters(self):
 
-        data_type = 'routes'
-        first_line = list(filter(lambda x: self.patterns['routes']['p_routes'][0] in x, self.core_list))
-
-        if self.patterns['id'] == 1:
-            self.block_routes = first_line
-
-        if self.patterns['id'] == 2:
-            block_list = filter_block(self.core_list, first_line, data_type, '!')
-            self.block_routes = block_list
+        if self.possible_peers != []:
+            block_list = self.filter.routes_filter(self.parameters, self.patterns, self.core_list)
+            if block_list[0] != [] or block_list[1] != []:
+                self.routes.get_data(self.parameters, block_list, self.possible_peers, self.patterns)
+        #print(self.parameters)
 
     def bgp_parameters(self):
 
@@ -104,16 +88,17 @@ path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Ju
 core_int = "GigabitEthernet9/17.1729101"
 
 path_v2 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Octubre/Bahia Blanca/Old device/CORE-BHB9.gics.ar.telefonica.com-2022-09-30_02_14_52.txt"
-core_int_v2 = "0/0/1/15.4040"
+core_int_v2 = "0/4/1/16.31262005"
 
 path_v3 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Junio/Bahia Blanca/Old Device/CORE-BHB7.gics.ar.telefonica.com-2022-06-02_02_14_15.txt"
 core_int_v3 = "5/0/5.999"
 
-manager = Controller(path, core_int)
+manager = Controller(path_v2, core_int_v2)
 manager.interface_parameters()
 manager.vpn_parameters()
+manager.peers_parameters()
 manager.routes_parameters()
-manager.bgp_parameters()
+#manager.bgp_parameters()
 
 
 

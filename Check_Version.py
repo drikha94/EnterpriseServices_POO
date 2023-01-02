@@ -1,3 +1,5 @@
+import re
+
 class Version:
 
     def check_version(self, core_list):
@@ -50,7 +52,9 @@ class Version:
                     'p_map': ['map']
                 },
                 'routes': {
-                    'p_routes': ['ip route ']
+                    'p_routes': ['ip route '],
+                    'p_vpns': ['ip route vrf '],
+
                 },
                 'bgp': {
                     'p_vpn': ['vrf ', 'address-family ipv4 vrf '],
@@ -63,8 +67,8 @@ class Version:
             patterns = {
                 'id': 2,
                 'inter': {
-                    'p_vpn': ['vrf', ''],
-                    'r_vpn': ['vrf', ''],
+                    'p_vpn': ['vrf', 'vrf'],
+                    'r_vpn': ['vrf', 'vrf'],
                     'p_ipsec': ["secondary"],
                     'r_ipsec': ["ipv4 address", "secondary"],
                     'p_ip': ['ipv4 address'],
@@ -92,7 +96,8 @@ class Version:
                     'p_map': ['map']
                 },
                 'routes': {
-                    'p_routes': ['router static']
+                    'p_routes': ['router static'],
+                    'p_vpns': ['vrf ']
                 },
                 'bgp': {
                     'p_vpn': ['vrf ', 'address-family ipv4 vrf ']
