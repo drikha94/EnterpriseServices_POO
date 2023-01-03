@@ -31,19 +31,6 @@ class Get_bgp_data:
             return confirmation
         return confirmation
         
-    def get_possible_peers(self, parameters):
-
-        if parameters['INTER']['IP'] != "":
-
-            ip_div = parameters['INTER']['IP'].split(".")
-            ip_div = [int(x) for x in ip_div]
-
-            if parameters['INTER']['MASK'] == "255.255.255.248":
-                self.bucle = 4
-
-            for peer in range(self.bucle):
-                peers = "{}.{}.{}.{}".format(ip_div[0], ip_div[1], ip_div[2], (ip_div[3] + self.sum_peer[peer]))
-                self.possible_peers.append(peers)
 
     def get_bgp_with_vpn(self, parameters, bgp_with_vpn_block):
         

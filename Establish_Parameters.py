@@ -22,9 +22,7 @@ parameters = {
         'MAP': ''
     },
     'BGP': {
-        
+        'PEER': ''
     },
-    'ROUTES': {
-        '':''
-    }
+    'ROUTES': []
 }

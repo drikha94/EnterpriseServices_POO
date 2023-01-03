@@ -23,6 +23,7 @@ class Controller:
         self.vpn = Get_vpn_data()
         self.routes = Get_routes_data()
         self.peers = Get_peers_data()
+        self.bgp = Get_bgp_data()
 
     def interface_parameters(self):
 
@@ -47,58 +48,35 @@ class Controller:
 
         if self.possible_peers != []:
             block_list = self.filter.routes_filter(self.parameters, self.patterns, self.core_list)
-            if block_list[0] != [] or block_list[1] != []:
+            if block_list != []:
                 self.routes.get_data(self.parameters, block_list, self.possible_peers, self.patterns)
         #print(self.parameters)
 
     def bgp_parameters(self):
 
-        data_type = 'bgp_one'
-        vpn = self.parameters['INTER']['VPN']
-        first_line = list((filter(lambda x: "router bgp " in x, self.core_list)))
-        block_list = filter_block(self.core_list, first_line, data_type, '!')  if first_line != [] else []
+        block_list = self.filter.bgp_filter(self.parameters, self.patterns, self.core_list, self.possible_peers)
+        print(block_list)
+        print(parameters)
 
-        data_type = 'bgp_two'
-        bgp_obj = Get_bgp_data()
-        confirmation = bgp_obj.first_filter(self.parameters, block_list, self.patterns)
-        bgp_obj.get_possible_peers(self.parameters)
-
-        bgp_without_vpn_block = filter_block(block_list, confirmation, data_type, 'vrf') if block_list != [] else []
-        if confirmation != False and self.parameters['INTER']['VPN'] != '':
-            bgp_with_vpn_block = filter_block(block_list, confirmation, data_type, '!')
-            bgp_obj.get_bgp_with_vpn(self.parameters, bgp_with_vpn_block)
-
-        bgp_obj.get_routes_with_vpn(self.parameters, self.block_routes)
-        
-   
-        #bgp_obj.get_data_with_vpn()
-        #bgp_obj.get_data_without_vpn()
-
-
-        #print(bgp_vpn_block)
-            #bgp_obj = Get_bgp_data()
-            #bgp_obj.get_data(self.parameters, bgp_vpn_block, self.block_routes)
-        #print(block_list)
-        #print(self.parameters)
 
 
 
 
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
-core_int = "GigabitEthernet9/17.1729101"
+core_int = "GigabitEthernet9/17.2847"
 
 path_v2 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Octubre/Bahia Blanca/Old device/CORE-BHB9.gics.ar.telefonica.com-2022-09-30_02_14_52.txt"
-core_int_v2 = "0/4/1/16.31262005"
+core_int_v2 = "0/4/1/16.2746100"
 
 path_v3 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Junio/Bahia Blanca/Old Device/CORE-BHB7.gics.ar.telefonica.com-2022-06-02_02_14_15.txt"
 core_int_v3 = "5/0/5.999"
 
-manager = Controller(path_v2, core_int_v2)
+manager = Controller(path, core_int)
 manager.interface_parameters()
 manager.vpn_parameters()
 manager.peers_parameters()
 manager.routes_parameters()
-#manager.bgp_parameters()
+manager.bgp_parameters()
 
 
 

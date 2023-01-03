@@ -1,3 +1,5 @@
+import re
+
 class Get_peers_data:
 
     def __init__(self):
@@ -19,3 +21,4 @@ class Get_peers_data:
             self.possible_peers.append(peers)
         
         return self.possible_peers
+        
