@@ -3,59 +3,114 @@ import re
 
 class Get_bgp_data:
 
-    def __init__(self):
+    def get_data(self, block_list, parameters, patterns):
+        
+        def import_route_static():
+            r_e = "".join(filter(lambda x: "redistribute static" in x, block_list))
+            if r_e != "":
+                parameters['BGP']['ATTRIBUTES']['import-route static'][0] = True
 
-        self.bucle = 2
-        self.sum_peer = [1, -1, 5, -5]
-        self.possible_peers = []
-        self.attributes_peer = []
-        self.static_routes_service = []
-        self.peer = ""
+        def load_balancing():
+            mp = "".join(filter(lambda x: "maximum-paths" in x, block_list)).replace("maximum-paths ", "").strip()
+            if mp != "":
+                parameters['BGP']['ATTRIBUTES']['maximum load-balancing ibgp'][0] = True
+                parameters['BGP']['ATTRIBUTES']['maximum load-balancing ibgp'][1] = mp
 
-    def first_filter(self, parameters, bgp_block, patterns):
+        def default_route():
+            d_r = "".join(filter(lambda x: "default-information" in x, block_list))
+            if d_r != "":
+                parameters['BGP']['ATTRIBUTES']['default-route-advertise'][0] = True
 
-        vpn = parameters['INTER']['VPN']
-        if vpn != "":
+        def import_route_rip():
+            rip = "".join(filter(lambda x: "redistribute rip" in x, block_list))
+            if rip != "":
+                parameters['BGP']['ATTRIBUTES']['import-route rip'][0] = True 
+                parameters['BGP']['ATTRIBUTES']['import-route rip'][1] = parameters['INTER']['REF']
 
-            first_line_two = list(filter(lambda x: patterns['bgp']['p_vpn'][0] + vpn in x, bgp_block))
-            if first_line_two != []:
-                first_line_two_string = "".join(first_line_two[0]).strip()
-                if first_line_two_string == "address-family ipv4 vrf " + vpn or first_line_two_string == "vrf " + vpn:
-                    confirmation = first_line_two
-                else:
-                    confirmation = False
+        def remote_as():
+            ra = "".join(filter(lambda x: "remote-as" in x, block_list))
+            ra = "".join(re.findall(r'remote-as \d+', ra)).replace('remote-as ', '').strip()
+            if ra != "":
+                parameters['BGP']['ATTRIBUTES']['as-number'][0] = True 
+                parameters['BGP']['ATTRIBUTES']['as-number'][1] = ra
+            
+        def description():
+            des = "".join(filter(lambda x: "description" in x, block_list))
+            des = "".join(re.findall(r'description.+', des)).replace('description ', '').strip()
+            if des != "":
+                parameters['BGP']['ATTRIBUTES']['description'][0] = True
+                parameters['BGP']['ATTRIBUTES']['description'][1] = des
 
-        else:
-            confirmation = [bgp_block[0]]
+        def keep_all_routes():
+            kar = "".join(filter(lambda x: "soft" in x, block_list))
+            if kar != "":
+                parameters['BGP']['ATTRIBUTES']['keep-all-routes'][0] = True
 
-            return confirmation
-        return confirmation
+        def route_limit():
+            rl = "".join(filter(lambda x: "maximum-prefix" in x, block_list))
+            rl = "".join(re.findall(r'maximum-prefix.+', rl)).replace('maximum-prefix ', '').strip()
+            if rl != "":
+                parameters['BGP']['ATTRIBUTES']['route-limit'][0] = True
+                parameters['BGP']['ATTRIBUTES']['route-limit'][1] = rl
+
+        def advertise_community():
+            ac = "".join(filter(lambda x: "send-community" in x, block_list))
+            if ac != "":
+                parameters['BGP']['ATTRIBUTES']['advertise-community'][0] = True
+
+        def substitute_as():
+            sa = "".join(filter(lambda x: "as-override" in x, block_list))
+            if sa != "":
+                parameters['BGP']['ATTRIBUTES']['substitute-as'][0] = True
+        
+        def password_cipher():
+            pc = "".join(filter(lambda x: "password" in x, block_list))
+            if pc != "":
+                parameters['BGP']['ATTRIBUTES']['password cipher'][0] = True
+
+        def ebgp_max_hop():
+            emh = "".join(filter(lambda x: "ebgp-multihop " in x, block_list))
+            emh = "".join(re.findall(r'ebgp-multihop.+', emh)).replace('ebgp-multihop ', '').strip()
+            if emh != "":
+                parameters['BGP']['ATTRIBUTES']['ebgp-max-hop'][0] = True
+                parameters['BGP']['ATTRIBUTES']['ebgp-max-hop'][1] = emh
+
+        def allow_as_loop():
+            asl = "".join(filter(lambda x: "allowas-in" in x, block_list))
+            if asl != "":
+                parameters['BGP']['ATTRIBUTES']['allow-as-loop'][0] = True
+            asl = "".join(re.findall(r'allowas-in.+', asl)).replace('allowas-in ', '').strip()
+            if asl != "":
+                parameters['BGP']['ATTRIBUTES']['allow-as-loop'][1] = asl
+        
+        def reflect_client():
+            rrc = "".join(filter(lambda x: "route-reflector-client" in x, block_list))
+            if rrc != "":
+                parameters['BGP']['ATTRIBUTES']['reflect-client'][0] = True
+            
+        def route_update_interval():
+            ai = "".join(filter(lambda x: "advertisement-interval" in x, block_list))
+            ai = "".join(re.findall(r'advertisement-interval.+', ai)).replace('advertisement-interval ', '').strip()
+            if ai != "":
+                parameters['BGP']['ATTRIBUTES']['route-update-interval'][0] = True
+                parameters['BGP']['ATTRIBUTES']['route-update-interval'][1] = ai
+
+        def rd_version_two():
+            if patterns['id'] == 2:
+                parameters['VPN']['RD'] = "".join(re.findall(r'rd \d+:\d+', "".join(block_list)))
+                parameters['VPN']['RD'] = parameters['VPN']['RD'].replace("rd ", "").strip()
+
+        import_route_static(), load_balancing(), default_route(), import_route_rip(), remote_as(), description()
+        keep_all_routes(), route_limit(), advertise_community(), substitute_as(), password_cipher(), ebgp_max_hop()
+        allow_as_loop(), reflect_client(), route_update_interval(), rd_version_two()
+
+
+                
         
 
-    def get_bgp_with_vpn(self, parameters, bgp_with_vpn_block):
+
         
-        if parameters['INTER']['IP'] != "" and bgp_with_vpn_block != []:
 
-            for peer in range(len(self.possible_peers)):
-                attributes_peer = list(filter(lambda x: self.possible_peers[peer] + " " in x, bgp_with_vpn_block))
-
-                if attributes_peer != []:
-                    self.attributes_peer = attributes_peer
-                    self.peer = self.possible_peers[peer]
-                    
-
-    def get_routes_with_vpn(self, parameters, block_routes):
-
-        if parameters['INTER']['IP'] != "" and block_routes != []:
-
-            for peer in range(len(self.possible_peers)):
-                static_routes_vpn = list(filter(lambda x: parameters['INTER']['VPN'] in x, block_routes))
-
-                if static_routes_vpn != []:
-                    self.static_routes_service.append("".join(filter(lambda x: self.possible_peers[peer] in x, static_routes_vpn)))
-        
-        print(static_routes_vpn)
-        print(self.static_routes_service)
 
             
 
