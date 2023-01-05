@@ -24,25 +24,45 @@ parameters = {
     'BGP': {
         'PEER': '',
         'ATTRIBUTES': {
+            'bgp 22927': [True, ''],
+            'ipv4-family vpn-instance': [True, ''],
+            'import-route direct': [True, ''],
             'import-route static': [False, 'N/A'],
-            'maximum load-balancing ibgp': [False, ''],
-            'default-route-advertise': [False, 'N/A'],
             'import-route rip': [False, ''],
+            'maximum load-balancing ibgp': [False, ''],
             'as-number': [False, ''],
             'description': [False, ''],
-            'keep-all-routes': [False, ''],
-            'route-limit': [False, ''],
             'advertise-community': [False, 'N/A'],
+            'keep-all-routes': [False, ''],
             'substitute-as': [False, 'N/A'],
+            'fake-as': [True, ''],
+            'route-limit': [False, ''],
+            'default-route-advertise': [False, 'N/A'],
             'password cipher': [False, ''],
             'ebgp-max-hop': [False, ''],
             'allow-as-loop': [False, ''],
+            'route-update-interval': [False, ''],
             'reflect-client': [False, 'N/A'],
-            'route-update-interval': [False, '']
+            'enable': [True, 'N/A']
+            
         }
     },
-    'POLICY_IN': ['xx', 'xx', 'xx'],
-    'POLICY_OUT': [],
-    'FLOW_QUEUE':[],
+    'POLICY_IN': [
+        '',
+        '',
+        ''
+    ],
+    'POLICY_OUT': {
+        'shape average': '',
+        'service-policy': ''
+    },
+    'FLOW_QUEUE':{
+        'class MM': [False, ''],
+        'class ORO': [False, ''],
+        'class PLATA': [False, ''],
+        'class BRONCE': [False, ''],
+        'class PLATINO':[False, ''],
+        'class VIDEO':[False, '']
+    },
     'ROUTES': []
 }
