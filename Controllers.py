@@ -36,6 +36,7 @@ class Controller:
         clean_interface = Get_Interface_Data()
         block_list = interface.interface_filter(self.core_interface, self.core_list)
         clean_interface.get_data(self.parameters, block_list, self.patterns)
+        #print(self.parameters)
 
     def vpn_parameters(self):
 
@@ -88,6 +89,7 @@ class Controller:
                 if block_list_flow != []:
                     clean_policy.get_data_flow_queue(block_list_flow, self.parameters)
 
+
                     
 
     def template(self):
@@ -98,15 +100,15 @@ class Controller:
     
 
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
-core_int = "9/17.1216100"
+core_int = "9/17.1729101"
 
 path_v2 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Octubre/Bahia Blanca/Old device/CORE-BHB9.gics.ar.telefonica.com-2022-09-30_02_14_52.txt"
-core_int_v2 = "0/0/1/7.12479"
+core_int_v2 = "0/0/1/7.36610"
 
 path_v3 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Junio/Bahia Blanca/Old Device/CORE-BHB7.gics.ar.telefonica.com-2022-06-02_02_14_15.txt"
 core_int_v3 = "5/0/5.999"
 
-manager = Controller(path, core_int)
+manager = Controller(path_v2, core_int_v2)
 manager.interface_parameters()
 manager.vpn_parameters()
 manager.peers_parameters()

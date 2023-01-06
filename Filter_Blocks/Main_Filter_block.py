@@ -26,7 +26,6 @@ class Filter_main_blocks:
                         break
                     if re.findall(break_point, list[x]) and list[x] == break_point:
                         break
-                        
 
             if space == True:
                 block_bkp = block

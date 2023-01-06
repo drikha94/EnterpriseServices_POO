@@ -57,12 +57,12 @@ parameters = {
         'service-policy': ''
     },
     'FLOW_QUEUE':{
-        'class MM': [False, ''],
-        'class ORO': [False, ''],
-        'class PLATA': [False, ''],
-        'class BRONCE': [False, ''],
-        'class PLATINO':[False, ''],
-        'class VIDEO':[False, '']
+        ' class MM': [False, ''],
+        ' class ORO': [False, ''],
+        ' class PLATA': [False, ''],
+        ' class BRONCE': [False, ''],
+        ' class PLATINO':[False, ''],
+        ' class VIDEO':[False, '']
     },
     'ROUTES': []
 }

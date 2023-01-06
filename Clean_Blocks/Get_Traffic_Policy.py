@@ -24,32 +24,50 @@ class Get_traffic_policy:
         parameters['POLICY_OUT']['service-policy'] = sp.replace("service-policy ", "").strip()
 
     def get_data_flow_queue(self, block_list, parameters):
+        
+        all_class = [' class MM', ' class ORO',' class PLATA', ' class BRONCE',' class PLATINO',' class VIDEO']
 
-        all_class = ['class MM','class ORO','class PLATA', 'class BRONCE','class PLATINO','class VIDEO']
-        class_type = []
-        class_values = []
-        test = []
+        def get_police_values(class_value):
+
+            for x in block_list:
+                first_class = re.findall(class_value, x)
+                if first_class != []:
+                    parameters['FLOW_QUEUE'][class_value][0] = True
+                    first_index = int(block_list.index(first_class[0]))
+
+                    for i in range(first_index, len(block_list)):
+                        if re.findall(r'percent \d+', block_list[i]):
+                            percent = "".join(re.findall(r'percent \d+', block_list[i]))
+                            parameters['FLOW_QUEUE'][class_value][1] = percent.replace('percent', '').strip()
+                            break
+
+                        if re.findall(r'bandwidth \d+', block_list[i]):
+                            bandwidth = "".join(re.findall(r'bandwidth \d+', block_list[i]))
+                            percent = "".join(re.findall(r'\d', bandwidth))
+                            rule = int(int(percent)*100 / int(parameters['POLICY_OUT']['shape average']))
+                            parameters['FLOW_QUEUE'][class_value][1] = rule
+                            break
+
+                        if re.findall(r'police \d+', block_list[i]):
+                            bandwidth = "".join(re.findall(r'police \d+', block_list[i]))
+                            percent = "".join(re.findall(r'\d', bandwidth))
+                            rule = int(int((int(percent)/1000)*100)/ int(parameters['POLICY_OUT']['shape average']))
+                            parameters['FLOW_QUEUE'][class_value][1] = rule
+                            break
+
+                        if re.findall(r'police rate \d+', block_list[i]):
+                            bandwidth = "".join(re.findall(r'police rate \d+', block_list[i]))
+                            percent = "".join(re.findall(r'\d', bandwidth))
+                            rule = int(int((int(percent)/1000)*100)/ int(parameters['POLICY_OUT']['shape average']))
+                            parameters['FLOW_QUEUE'][class_value][1] = rule
+                            break
 
         for x in range(len(all_class)):
-            if re.findall(all_class[x], "".join(block_list)):
-                parameters['FLOW_QUEUE'][all_class[x]][0] = True
-
-        for x in block_list:
-            if re.findall("bandwidth", x) or re.findall("percent", x):
-                class_values.append(int("".join(re.findall(r'\d', x))))
-
-        for x in class_values:
-            if x > 100:
-                percent_value = (int((x * 100) / int(parameters['POLICY_OUT']['shape average'])))
-        
-            print(percent_value)
-
-                
-                    
+            get_police_values(all_class[x])
 
 
-
-
-        
-        
     
+            
+
+
+        

@@ -1,4 +1,5 @@
 from Filter_Blocks.Main_Filter_block import Filter_main_blocks
+import re
 
 class Policy_filter_block:
 
@@ -19,3 +20,7 @@ class Policy_filter_block:
             return block_list
         else:
             return []
+
+            
+
+
