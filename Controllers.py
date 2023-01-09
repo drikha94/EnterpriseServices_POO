@@ -1,7 +1,6 @@
 from Check_Version import version
 from Open_File import open_txt
 from Establish_Parameters import parameters
-#from Templates.Management import template_management_obj
 from Templates.Bgp import Service_template
 
 """IMPORTACION DE LOS MODULOS QUE RETORNAN UN BLOQUE EN ESPECIFICO DEL CORE"""
@@ -89,21 +88,21 @@ class Controller:
                 if block_list_flow != []:
                     clean_policy.get_data_flow_queue(block_list_flow, self.parameters)
 
-
+        #print(self.parameters)
                     
 
     def template(self):
 
         template_service_obj = Service_template(self.parameters)
-        #print("".join(template_service_obj.bgp_service()))
+        print("".join(template_service_obj.flow_queue()))
 
     
 
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
-core_int = "9/17.1729101"
+core_int = "9/1.3343459"
 
 path_v2 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Octubre/Bahia Blanca/Old device/CORE-BHB9.gics.ar.telefonica.com-2022-09-30_02_14_52.txt"
-core_int_v2 = "0/0/1/7.36610"
+core_int_v2 = "0/4/1/16.338"
 
 path_v3 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Junio/Bahia Blanca/Old Device/CORE-BHB7.gics.ar.telefonica.com-2022-06-02_02_14_15.txt"
 core_int_v3 = "5/0/5.999"
@@ -115,7 +114,7 @@ manager.peers_parameters()
 manager.routes_parameters()
 manager.bgp_parameters()
 manager.policy_parameters()
-#manager.template()
+manager.template()
 
 
 

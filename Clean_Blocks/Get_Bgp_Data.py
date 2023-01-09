@@ -18,6 +18,7 @@ class Get_bgp_data:
 
         def default_route():
             d_r = "".join(filter(lambda x: "default-information" in x, block_list))
+            d_r = "".join(filter(lambda x: "default-originate" in x, block_list)) if d_r == "" else d_r
             if d_r != "":
                 parameters['BGP']['ATTRIBUTES']['default-route-advertise'][0] = True
 
