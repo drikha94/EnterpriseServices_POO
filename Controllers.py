@@ -2,6 +2,7 @@ from Check_Version import version
 from Open_File import open_txt
 from Establish_Parameters import parameters
 from Templates.Bgp import Service_template
+from Templates.Enterprise_Service import policy_template, vpn_template, bgp_template
 
 """IMPORTACION DE LOS MODULOS QUE RETORNAN UN BLOQUE EN ESPECIFICO DEL CORE"""
 from Filter_Blocks.Interface import Interface_filter_block
@@ -94,7 +95,9 @@ class Controller:
     def template(self):
 
         template_service_obj = Service_template(self.parameters)
-        print("".join(template_service_obj.flow_queue()))
+        print("".join(template_service_obj.policy_service(policy_template)))
+        print("".join(template_service_obj.vpn_service(vpn_template)))
+        print("".join(template_service_obj.bgp_service(bgp_template)))
 
     
 

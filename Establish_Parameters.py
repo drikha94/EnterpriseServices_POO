@@ -47,11 +47,7 @@ parameters = {
             
         }
     },
-    'POLICY_IN': [
-        '',
-        '',
-        ''
-    ],
+    'POLICY_IN': [],
     'POLICY_OUT': {
         'shape average': '',
         'service-policy': ''

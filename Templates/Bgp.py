@@ -7,85 +7,57 @@ class Service_template:
         self.parameters = parameters
         self.vpn = parameters['INTER']['VPN'] if parameters['INTER']['VPN'] != "" else 'INFOINTERNET'
 
-    def policy_service(self):
+    def policy_service(self, policy_template):
+                                                    
+        for x in range(len(self.parameters['POLICY_IN'])):
+            policy_template[6] = policy_template[6].replace('number_one', self.parameters['POLICY_IN'][x]) if x == 0 else policy_template[6]
+            policy_template[6] = policy_template[6].replace('number_two', self.parameters['POLICY_IN'][x]) if x == 1 else policy_template[6]
+            policy_template[6] = policy_template[6].replace('number_tree', self.parameters['POLICY_IN'][x]) if x == 2 else policy_template[6]
 
-        enlace = self.parameters['INTER']['POLICY_IN']
-        policy_in = self.parameters['POLICY_IN']
+        policy_template[6] = policy_template[6].replace('car cir number_one', "")
+        policy_template[6] = policy_template[6].replace('cbs number_two', "")
+        policy_template[6] = policy_template[6].replace('pbs number_tree green pass red discard', "")
 
-        policy_template = [
-            f'traffic classifier default\n',
-            f' if-match any\n',
-            f' commit\n',
-            f' quit\n',
-            f'#\n',
-            f'traffic behavior {enlace}\n',
-            f' car cir number_one ', f'cbs number_two ', f'pbs number_tree green pass red discard', '\n'
-            f'#\n', 
-            f' traffic policy {enlace}\n',
-            f' undo share-mode\n', 
-            f' statistics enable\n', 
-            f' classifier default behavior {enlace}\n',
-            f'#\n',
-            f'#'
-        ]
-        print(policy_in)
-        if len(policy_in) == 1:
-            policy_template[6] = policy_template[6].replace('number_one', policy_in[0])
-            policy_template.remove('cbs number_two ')
-            policy_template.remove('pbs number_tree green pass red discard')
-
-        if len(policy_in) == 2:
-            policy_template[6] = policy_template[6].replace('number_one', policy_in[0])
-            policy_template[7] = policy_template[7].replace('number_two', policy_in[1])
-            policy_template.pop(8)
-
-        if len(policy_in) == 3:
-            policy_template[6] = policy_template[6].replace('number_one', policy_in[0])
-            policy_template[7] = policy_template[7].replace('number_two', policy_in[1])
-            policy_template[8] = policy_template[8].replace('number_tree', policy_in[2])
+        policy_template = [x.replace('ENLACE_XX', self.parameters['INTER']['POLICY_IN']) for x in policy_template]
 
         return policy_template
        
-    def vpn_service(self):
-       
-        description = self.parameters['VPN']['DESCRIP']
-        rd = self.parameters['VPN']['RD']
-        rte = self.parameters['VPN']['RTE']
-        rti = self.parameters['VPN']['RTI']
-
-        vpn_template = [
-        f'ip vpn-instance {self.vpn}\n',
-        f' description ### {description} ###\n',
-        f' ipv4-family\n',
-        f'  route-distinguisher {rd}\n',
-        f'  vpn-target rte export-extcommunity\n',
-        f'  vpn-target rti import-extcommunity\n',
-        f'  apply-label per-instance\n',
-        f'#\n',
-        f'#\n'
-        ]
+    def vpn_service(self, vpn_template):
         
+        vpn_template[0] = vpn_template[0].replace('VPN_NAME', self.vpn)
+        vpn_template[1] = vpn_template[1].replace('VPN_DESCRIPTION', self.parameters['VPN']['DESCRIP'])
+        vpn_template[3] = vpn_template[3].replace('ROUTE_DISTINGUISHER', self.parameters['VPN']['RD'])
+
         def target(vpn_target, to_replace, to_insert, num):
             for x in range(len(vpn_target)):
                 vpn_template[num] = vpn_template[num].replace(to_replace, vpn_target[x])
                 if x < len(vpn_target):
                     vpn_template.insert(num+1, to_insert)
                     num += 1
-        
-        target(rte, 'rte', '  vpn-target rte export-extcommunity\n', 4)
-        target(rti, 'rti', '  vpn-target rti import-extcommunity\n', vpn_template.index('  vpn-target rti import-extcommunity\n'))
-        vpn_template.remove('  vpn-target rte export-extcommunity\n')
-        vpn_template.remove('  vpn-target rti import-extcommunity\n')
+
+        target(self.parameters['VPN']['RTE'], 'RTE_NUMBER', '  vpn-target RTE_NUMBER export-extcommunity\n', 4)
+        num = vpn_template.index('  vpn-target RTI_NUMBER import-extcommunity\n')
+        target(self.parameters['VPN']['RTI'], 'RTI_NUMBER', '  vpn-target RTI_NUMBER import-extcommunity\n', num)
+        vpn_template.remove('  vpn-target RTE_NUMBER export-extcommunity\n')
+        vpn_template.remove('  vpn-target RTI_NUMBER import-extcommunity\n')
 
         return vpn_template
 
-    def bgp_service(self):
+    def bgp_service(self, bgp_template):
 
         """CUALQUIER COMANDO QUE SE QUIERA AGREGAR ES NECESARIO AGREGARLO TAMBIEN EN EL 
         ARCHIVO Establish_Parameters.py EN EL MISMO ORDEN EN EL QUE SE AGREGE EN EL TEMPLATE, 
         CON SU RESPECTIVA CONFIRMACION BOOLEANA"""
         
-        peer = self.parameters['BGP']['PEER']
+        bgp_template = [x.replace('IP_PEER', self.parameters['BGP']['PEER']) for x in bgp_template]
+        bgp_template[1] = bgp_template[1].replace('VPN_NAME', self.vpn)
+        bgp_template[4] = bgp_template[4].replace('RIP_NUMBER', self.parameters['BGP']['ATTRIBUTES']['import-route rip'][1])
+        bgp_template[5] = bgp_template[5].replace('BALANCING_NUMBER', self.parameters['BGP']['ATTRIBUTES']['maximum load-balancing ibgp'][1])
+        bgp_template[6] = bgp_template[6].replace('AS_NUMBER', self.parameters['BGP']['ATTRIBUTES']['as-number'][1])
+        bgp_template[7] = bgp_template[7].replace('BGP_DESCRIPTION', self.parameters['BGP']['ATTRIBUTES']['description'][1])
+        bgp_template[12] = bgp_template[12].replace('ROUTE_LIMIT', self.parameters['BGP']['ATTRIBUTES']['route-limit'][1])
+        bgp_template[14] = bgp_template[14].replace('PASSWORD_CIPHER', self.parameters['BGP']['ATTRIBUTES']['password cipher'][1])
+        """
         as_number = self.parameters['BGP']['ATTRIBUTES']['as-number']
         description = self.parameters['BGP']['ATTRIBUTES']['description']
         load_balancing = self.parameters['BGP']['ATTRIBUTES']['maximum load-balancing ibgp']
@@ -94,8 +66,8 @@ class Service_template:
         ebgp_max_hop = self.parameters['BGP']['ATTRIBUTES']['ebgp-max-hop']
         allow_as_loop = self.parameters['BGP']['ATTRIBUTES']['allow-as-loop']
         route_interval = self.parameters['BGP']['ATTRIBUTES']['route-update-interval']
-        route_rip = self.parameters['BGP']['ATTRIBUTES']['import-route rip']
-
+        route_rip = self.parameters['BGP']['ATTRIBUTES']['import-route rip']"""
+        """
         bgp_template = [
         f'bgp 22927\n', 
         f' ipv4-family vpn-instance {self.vpn}\n',
@@ -118,7 +90,9 @@ class Service_template:
         f' peer {peer} reflect-client\n',
         f' peer {peer} enable\n',
         ]
+        """
 
+        """
         confirmation, bgp_service = [], []
         for x in self.parameters['BGP']['ATTRIBUTES'].values():
             confirmation.append(x[0])
@@ -126,8 +100,9 @@ class Service_template:
         for x in range(len(bgp_template)):
             if confirmation[x] == True:
                 bgp_service.append(bgp_template[x]) 
+                """
  
-        return bgp_service
+        return bgp_template
 
     def flow_queue(self):
 
