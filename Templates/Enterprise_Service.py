@@ -50,3 +50,40 @@ bgp_template = [
     f' peer IP_PEER enable\n'
 ]
 
+flow_template = [
+    f'flow-queue SERVICE_POLICY\n',  
+    f'  queue ef pq shaping shaping-percentage PERCENT_NUMBER\n',
+    f'  queue AF1 wfq weight PERCENT_NUMBER\n',
+    f'  queue AF2 wfq weight PERCENT_NUMBER\n',
+    f'  queue AF3 wfq weight PERCENT_NUMBER\n',
+    f'  queue AF4 wfq weight PERCENT_NUMBER\n',
+    f'  queue BE wfq weight PERCENT_NUMBER\n',
+    f'  quit\n',
+    f'commit\n',
+    f'#\n',
+    f'qos-profile QOS_PROFILE\n',
+    f' user-queue cir SHAPE_AVERAGE flow-queue SERVICE_POLICY\n',
+    f'#\n',
+    f'#\n'
+]
+
+interface_template = [ 
+    'interface GigabitEthernetX/X/X.VLANC\n',
+    ' shutdown\n',
+    ' Vlan-type dot1q VLANUNO\n',
+    ' encapsulation qinq-termination\n',
+    ' qinq termination pe-vid VLANUNO ce-vid VLANDOS\n',
+    ' ip binding vpn-instance VPN_NAME\n',
+    ' description NAME_SERVICE\n',
+    ' ip address NAME_SERVICE\n',
+    ' ip address NAME_SERVICE sub\n',
+    ' traffic-policy NAME_SERVICE inbound\n',
+    ' traffic-policy NAME_SERVICE outbound\n',
+    ' qos-profile NAME_SERVICE outbound\n',
+    ' statistic enable\n',
+    ' trust upstream default\n',
+    ' arp broadcast enable\n',
+    'commit\n',
+    '#\n',
+    '#'
+]

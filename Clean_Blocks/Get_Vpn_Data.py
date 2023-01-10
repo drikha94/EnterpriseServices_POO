@@ -35,9 +35,14 @@ class Get_vpn_data:
 
             if patterns['id'] == 1:
                 parameters['VPN']['DESCRIP'] = "".join(filter(lambda x: patterns['vpn']['p_descrip'][0] in x, block_list))
+                if parameters['VPN']['DESCRIP'] == "":
+                    parameters['VPN']['DESCRIP'] = parameters['INTER']['VPN']
 
             if patterns['id'] == 2:
                 parameters['VPN']['DESCRIP'] = "".join(filter(lambda x: patterns['vpn']['p_descrip'][0] in x, block_list[0]))
+                if parameters['VPN']['DESCRIP'] == "":
+                    parameters['VPN']['DESCRIP'] = parameters['INTER']['VPN']
+
             parameters['VPN']['DESCRIP'] = parameters['VPN']['DESCRIP'].replace(patterns['vpn']['r_descrip'][0], "").strip()
             
         def get_map():

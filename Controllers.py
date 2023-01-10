@@ -1,8 +1,8 @@
 from Check_Version import version
 from Open_File import open_txt
 from Establish_Parameters import parameters
-from Templates.Bgp import Service_template
-from Templates.Enterprise_Service import policy_template, vpn_template, bgp_template
+from Templates.Replacement import Service_template
+from Templates.Enterprise_Service import policy_template, vpn_template, bgp_template, flow_template, interface_template
 
 """IMPORTACION DE LOS MODULOS QUE RETORNAN UN BLOQUE EN ESPECIFICO DEL CORE"""
 from Filter_Blocks.Interface import Interface_filter_block
@@ -36,7 +36,7 @@ class Controller:
         clean_interface = Get_Interface_Data()
         block_list = interface.interface_filter(self.core_interface, self.core_list)
         clean_interface.get_data(self.parameters, block_list, self.patterns)
-        #print(self.parameters)
+        print(self.parameters)
 
     def vpn_parameters(self):
 
@@ -61,6 +61,7 @@ class Controller:
             block_list = routes.routes_filter(self.parameters, self.patterns, self.core_list, self.possible_peers)
             if block_list != []:
                 clean_routes.get_data(self.parameters, block_list, self.patterns)
+        print(self.parameters)
 
     def bgp_parameters(self):
 
@@ -68,6 +69,7 @@ class Controller:
         clean_bgp = Get_bgp_data()
         block_list = bgp.bgp_filter(self.parameters, self.patterns, self.core_list, self.possible_peers)
         if block_list != []:
+            self.parameters['BGP']['STATUS'] = True
             clean_bgp.get_data(block_list, self.parameters, self.patterns)
 
     def policy_parameters(self):
@@ -89,23 +91,26 @@ class Controller:
                 if block_list_flow != []:
                     clean_policy.get_data_flow_queue(block_list_flow, self.parameters)
 
-        #print(self.parameters)
-                    
-
     def template(self):
 
         template_service_obj = Service_template(self.parameters)
-        print("".join(template_service_obj.policy_service(policy_template)))
-        print("".join(template_service_obj.vpn_service(vpn_template)))
-        print("".join(template_service_obj.bgp_service(bgp_template)))
+        if self.parameters['INTER']['POLICY_IN'] != "":
+            print("".join(template_service_obj.policy_service(policy_template)))
+        if self.parameters['INTER']['VPN'] != "":
+            print("".join(template_service_obj.vpn_service(vpn_template)))
+        if self.parameters['BGP']['STATUS'] == True:
+            print("".join(template_service_obj.bgp_service(bgp_template)))
+        if self.parameters['INTER']['POLICY_OUT'] != "" and self.parameters['INTER']['POLICY_OUT'] != self.parameters['INTER']['POLICY_IN']:
+            print("".join(template_service_obj.flow_service(flow_template)))
+        print("".join(template_service_obj.interface_service(interface_template, 'fiber')))
 
     
 
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
-core_int = "9/1.3343459"
+core_int = "11/1.1111100"
 
 path_v2 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Octubre/Bahia Blanca/Old device/CORE-BHB9.gics.ar.telefonica.com-2022-09-30_02_14_52.txt"
-core_int_v2 = "0/4/1/16.338"
+core_int_v2 = "0/4/1/16.1081"
 
 path_v3 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Junio/Bahia Blanca/Old Device/CORE-BHB7.gics.ar.telefonica.com-2022-06-02_02_14_15.txt"
 core_int_v3 = "5/0/5.999"

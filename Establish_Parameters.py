@@ -22,6 +22,7 @@ parameters = {
         'MAP': ''
     },
     'BGP': {
+        'STATUS': False,
         'PEER': '',
         'ATTRIBUTES': {
             'bgp 22927': [True, ''],
@@ -60,5 +61,6 @@ parameters = {
         ' class PLATINO':[False, ''],
         ' class VIDEO':[False, '']
     },
-    'ROUTES': []
+    'ROUTES': [],
+    'NEW_INTERFACE': '5/5/5'
 }
