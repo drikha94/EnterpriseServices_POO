@@ -27,6 +27,16 @@ vpn_template = [
     f'#\n'
 ]
 
+rip_template = [
+    f'rip RIP_NUMBER vpn-instance VPN_NAME\n',
+    f' import-route bgp cost 1\n',
+    f' network RIP_NETWORK\n',
+    f' peer RIP_PEER\n',
+    f' version 2\n',
+    f' undo summary\n',
+    f'#'
+]
+
 bgp_template = [
     f'bgp 22927\n', 
     f' ipv4-family vpn-instance VPN_NAME\n',
@@ -86,4 +96,8 @@ interface_template = [
     'commit\n',
     '#\n',
     '#'
+]
+
+routes_template = [
+    'ip route-static vpn-instance VPN_NAME IPFINAL_MASK_IPPEER description *** VPN_NAME REF:REF_NAME ***\n'
 ]

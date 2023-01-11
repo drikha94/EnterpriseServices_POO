@@ -43,6 +43,16 @@ class Service_template:
 
         return vpn_template
 
+    def rip_service(self, rip_template):
+        pass
+        
+        """
+        rip_service= []
+        if self.parameters['RIP']['network'] != []:
+            for x in range(len(self.parameters['RIP']['network'])):
+                pass"""
+                
+
     def bgp_service(self, bgp_template):
 
         """CUALQUIER COMANDO QUE SE QUIERA AGREGAR ES NECESARIO AGREGARLO TAMBIEN EN EL 
@@ -160,6 +170,8 @@ class Service_template:
             inter_template.remove(' arp broadcast enable\n')
 
         inter_template.remove(' shutdown\n') if self.parameters['INTER']['STATUS'] == "" else inter_template
+        if not re.findall('/', self.parameters['NEW_INTERFACE']):
+            inter_template[0] = inter_template[0].replace('GigabitEthernet', 'Eth-Trunk') 
 
         inter_template_bkp = inter_template
         inter_template = []
@@ -168,6 +180,18 @@ class Service_template:
                 inter_template.append(x)
 
         return inter_template
+
+    def routes_service(self, routes_template):
+
+        routes_service = []
+        for x in range(len(self.parameters['ROUTES'])):
+            route = routes_template[0].replace('VPN_NAME', self.vpn)
+            route = route.replace('IPFINAL_MASK_IPPEER', self.parameters['ROUTES'][x])
+            if self.parameters['INTER']['REF'] != "":
+                route = route.replace('REF_NAME', self.parameters['INTER']['REF'])
+            routes_service.append(route)
+
+        return routes_service
 
 
 

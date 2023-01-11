@@ -48,6 +48,11 @@ parameters = {
             
         }
     },
+    'RIP': {
+        'STATUS': False,
+        'network': [],
+        'neighbor': []
+    },
     'POLICY_IN': [],
     'POLICY_OUT': {
         'shape average': '',
@@ -62,5 +67,5 @@ parameters = {
         ' class VIDEO':[False, '']
     },
     'ROUTES': [],
-    'NEW_INTERFACE': '5/5/5'
+    'NEW_INTERFACE': '55'
 }

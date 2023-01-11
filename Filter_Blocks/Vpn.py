@@ -1,4 +1,5 @@
 from Filter_Blocks.Main_Filter_block import Filter_main_blocks
+import re 
 
 class Vpn_filter_block:
 
@@ -14,7 +15,13 @@ class Vpn_filter_block:
         first_line = list(filter(lambda linea: patterns['vpn']['p_vpn'][0] + vpn in linea, core_list))
         if first_line == []:
             first_line = list(filter(lambda linea: patterns['vpn']['p_vpn'][1] + vpn in linea, core_list))
-        block_list = self.main_filter.block(core_list, first_line, data_type, '!', True, False)
+        
+        first_line_filtered = []
+        for x in first_line:
+            if not re.findall('^ ', x) and re.findall(vpn+'$', x):
+                first_line_filtered.append(x)
+
+        block_list = self.main_filter.block(core_list, first_line_filtered, data_type, '!', True, False)
 
         if (block_list[0] == patterns['vpn']['p_vpn'][0] + vpn) or (block_list[0] == patterns['vpn']['p_vpn'][1] + vpn):
             if patterns['id'] == 1:

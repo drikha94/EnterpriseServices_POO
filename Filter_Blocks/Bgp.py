@@ -20,7 +20,7 @@ class Bgp_filter_block:
 
             if patterns['id'] == 1:
                 block_list_reduced = self.main_filter.block(block_list, block_list, data_type, 'address-family ipv4 vrf', False, False)
-                peer = self.select_peer.peer_filter(peers, "".join(block_list_reduced))
+                peer = self.select_peer.peer_filter(peers, "".join(block_list_reduced)) if peers != [] else ""
                 parameters['BGP']['PEER'] = peer
                 if peer != "":
                     block_list_peer = list(filter(lambda x: f'{peer} ' in x, block_list_reduced))
@@ -29,7 +29,7 @@ class Bgp_filter_block:
                 
             if patterns['id'] == 2:
                 block_list_reduced = self.main_filter.block(block_list, block_list, data_type, 'vrf', False, False)
-                peer = self.select_peer.peer_filter(peers, "".join(block_list_reduced))
+                peer = self.select_peer.peer_filter(peers, "".join(block_list_reduced)) if peers != [] else ""
                 parameters['BGP']['PEER'] = peer
                 if peer != "":
                     first_line = list(filter(lambda x: f'{peer} ' in x, block_list_reduced))
@@ -43,7 +43,7 @@ class Bgp_filter_block:
                 first_line = list(filter(lambda x: f'address-family ipv4 vrf {vpn} ' in x, block_list))
                 if first_line != []:
                     block_list_reduced = self.main_filter.block(block_list, first_line, data_type, '!', False, False)
-                    peer = self.select_peer.peer_filter(peers, "".join(block_list_reduced))
+                    peer = self.select_peer.peer_filter(peers, "".join(block_list_reduced)) if peers != [] else ""
                     parameters['BGP']['PEER'] = peer
                     vpn_properties = [x for x in block_list_reduced if not re.findall('neighbor', x)]
                     if peer != "":
@@ -57,7 +57,7 @@ class Bgp_filter_block:
                 first_line = list(filter(lambda x: f'vrf {vpn} ' in x, block_list))
                 if first_line != []:
                     block_list_reduced = self.main_filter.block(block_list, first_line, data_type, ' ! ', True, False)
-                    peer = self.select_peer.peer_filter(peers, "".join(block_list_reduced))
+                    peer = self.select_peer.peer_filter(peers, "".join(block_list_reduced)) if peers != [] else ""
                     parameters['BGP']['PEER'] = peer
                     vpn_properties = self.main_filter.block(block_list_reduced, block_list_reduced, data_type, '! ', False, False)
                     if peer != "":

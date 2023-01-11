@@ -12,8 +12,10 @@ class Interface_filter_block:
         data_type = 'interface'
         find_interface = list(filter(lambda linea: core_interface in linea, core_list))
 
+        interface_filtered = []
         for x in find_interface:
-            find_interface = [x] if not re.findall('^ ', x) else find_interface
+            if not re.findall('^ ', x) and re.findall(core_interface+'$', x):
+                interface_filtered.append(x)
 
-        block_list = self.main_filter.block(core_list, find_interface, data_type, '!', True, False)
+        block_list = self.main_filter.block(core_list, interface_filtered, data_type, '!', True, False)
         return block_list

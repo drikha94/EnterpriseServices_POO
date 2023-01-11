@@ -6,7 +6,7 @@ class Filter_main_blocks:
     def block(self, list, first_line, data_type, break_point, validation, space):
 
         block = []
-
+        #print(first_line)
         if first_line != []: 
             
             first_index = int(list.index(first_line[0]))
