@@ -42,6 +42,7 @@ class Get_Interface_Data:
             """BUSCA LA DESCRIPCION DE LA INTERFACE Y LA ALMACENA EN EL DICCIONARIO"""
             description = "".join(filter(lambda x: patterns['inter']['p_descrip'][0] in x, block_list))
             parameters['INTER']['DESCRIP'] = description.replace(patterns['inter']['r_descrip'][0], "").strip()
+            parameters['INTER']['DESCRIP'] = 'XXXXX' if parameters['INTER']['DESCRIP'] == '' else parameters['INTER']['DESCRIP']
 
         def get_vlans():
 

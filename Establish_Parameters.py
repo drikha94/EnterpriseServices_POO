@@ -25,12 +25,9 @@ parameters = {
         'STATUS': False,
         'PEER': '',
         'ATTRIBUTES': {
-            'bgp 22927': [True, ''],
-            'ipv4-family vpn-instance': [True, ''],
-            'import-route direct': [True, ''],
             'import-route static': [False, 'N/A'],
             'import-route rip': [False, ''],
-            'maximum load-balancing ibgp': [False, ''],
+            'maximum load': [False, ''],
             'as-number': [False, ''],
             'description': [False, ''],
             'advertise-community': [False, 'N/A'],
@@ -42,10 +39,10 @@ parameters = {
             'password cipher': [False, ''],
             'ebgp-max-hop': [False, ''],
             'allow-as-loop': [False, ''],
-            'route-update-interval': [False, ''],
+            'route-update': [False, ''],
             'reflect-client': [False, 'N/A'],
-            'enable': [True, 'N/A']
-            
+            'route-policy_in': [False, ''],
+            'route-policy_out': [False, '']
         }
     },
     'RIP': {
@@ -67,5 +64,6 @@ parameters = {
         ' class VIDEO':[False, '']
     },
     'ROUTES': [],
-    'NEW_INTERFACE': '55'
+    'NEW_INTERFACE': '55',
+    'OLD_INTERFACE': ''
 }

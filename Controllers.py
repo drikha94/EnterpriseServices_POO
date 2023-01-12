@@ -36,7 +36,7 @@ class Controller:
 
         interface = Interface_filter_block()
         clean_interface = Get_Interface_Data()
-        block_list = interface.interface_filter(self.core_interface, self.core_list)
+        block_list = interface.interface_filter(self.core_interface, self.core_list, self.parameters)
         clean_interface.get_data(self.parameters, block_list, self.patterns)
 
     def vpn_parameters(self):
@@ -73,6 +73,7 @@ class Controller:
         if block_list != []:
             self.parameters['BGP']['STATUS'] = True
             clean_bgp.get_data(block_list, self.parameters, self.patterns)
+            print(self.parameters)
     
     def rip_parameters(self):
 
@@ -80,9 +81,11 @@ class Controller:
             rip = Rip_filter_block()
             clean_rip = Get_rip_data()
             block_list = rip.rip_filter(self.parameters, self.patterns, self.core_list)
+            #print(block_list)
             if block_list != []:
                 clean_rip.get_data(block_list, self.parameters, self.patterns) 
-        print(self.parameters)
+                self.parameters['RIP']['STATUS'] = True
+
 
     def policy_parameters(self):
 
@@ -125,17 +128,22 @@ class Controller:
 
         if self.parameters['ROUTES'] != []:
             print("".join(template_service_obj.routes_service(routes_template)))
+        
+        #print(self.parameters)
 
     
 
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
-core_int = "9/1.3343207"
+core_int = "9/3.83210"
 
 path_v2 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Octubre/Bahia Blanca/Old device/CORE-BHB9.gics.ar.telefonica.com-2022-09-30_02_14_52.txt"
 core_int_v2 = "0/4/1/16.338"
 
 path_v3 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Junio/Bahia Blanca/Old Device/CORE-BHB7.gics.ar.telefonica.com-2022-06-02_02_14_15.txt"
 core_int_v3 = "5/0/5.999"
+
+path_v4 = "C:/Users/awx910701/Documents/Configuraciones/Script/2021/FEBRUARY/Neuquen2/Old Device/CORE-NQN9.gics.ar.telefonica.com-2021-02-11_02_01_41.txt"
+core_int_v4 = '0/4/1/0.3395115'
 
 manager = Controller(path, core_int)
 manager.interface_parameters()
@@ -144,7 +152,7 @@ manager.peers_parameters()
 manager.routes_parameters()
 manager.bgp_parameters()
 manager.rip_parameters()
-#manager.policy_parameters()
+manager.policy_parameters()
 #manager.template()
 
 

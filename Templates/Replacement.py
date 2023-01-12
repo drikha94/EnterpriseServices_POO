@@ -44,142 +44,140 @@ class Service_template:
         return vpn_template
 
     def rip_service(self, rip_template):
-        pass
-        
-        """
-        rip_service= []
+         
+        def peer(peer_type, to_replace, to_insert, num):
+
+            for x in range(len(peer_type)):
+                rip_template[num] = rip_template[num].replace(to_replace, peer_type[x])
+                if x < len(peer_type):
+                    rip_template.insert(num+1, to_insert)
+                    num += 1
+
         if self.parameters['RIP']['network'] != []:
-            for x in range(len(self.parameters['RIP']['network'])):
-                pass"""
+            peer(self.parameters['RIP']['network'], 'PEER_IP', ' network PEER_IP\n', 2)
+        if self.parameters['RIP']['neighbor'] != []:
+            peer(self.parameters['RIP']['neighbor'], 'PEER_IP', ' peer PEER_IP\n', rip_template.index(' peer PEER_IP\n'))
+
+        ref = self.parameters['INTER']['REF']
+        rip_template[0] = rip_template[0].replace('RIP_NUMBER', ref) if ref != "" else rip_template[0].replace('RIP_NUMBER', 'XXXXX')
+        rip_template[0] = rip_template[0].replace('VPN_NAME', self.vpn)
+
+        rip_template.remove(' network PEER_IP\n')
+        rip_template.remove(' peer PEER_IP\n')
+        rip_template = [x for x in rip_template if not re.findall('PEER_IP', x)]
+
+        return rip_template
                 
 
-    def bgp_service(self, bgp_template):
+    def bgp_service(self, template):
 
-        """CUALQUIER COMANDO QUE SE QUIERA AGREGAR ES NECESARIO AGREGARLO TAMBIEN EN EL 
-        ARCHIVO Establish_Parameters.py EN EL MISMO ORDEN EN EL QUE SE AGREGE EN EL TEMPLATE, 
-        CON SU RESPECTIVA CONFIRMACION BOOLEANA"""
+        bgp = self.parameters['BGP']['ATTRIBUTES']
+        peer = self.parameters['BGP']['PEER']
 
-        if self.parameters['BGP']['PEER'] == "":
-            self.parameters['BGP']['ATTRIBUTES']['fake-as'][0] = False
-            self.parameters['BGP']['ATTRIBUTES']['enable'][0] = False
-        
-        bgp_template = [x.replace('IP_PEER', self.parameters['BGP']['PEER']) for x in bgp_template]
-        bgp_template[1] = bgp_template[1].replace('VPN_NAME', self.vpn)
-        bgp_template[4] = bgp_template[4].replace('RIP_NUMBER', self.parameters['BGP']['ATTRIBUTES']['import-route rip'][1])
-        bgp_template[5] = bgp_template[5].replace('BALANCING_NUMBER', self.parameters['BGP']['ATTRIBUTES']['maximum load-balancing ibgp'][1])
-        bgp_template[6] = bgp_template[6].replace('AS_NUMBER', self.parameters['BGP']['ATTRIBUTES']['as-number'][1])
-        bgp_template[7] = bgp_template[7].replace('BGP_DESCRIPTION', self.parameters['BGP']['ATTRIBUTES']['description'][1])
-        bgp_template[12] = bgp_template[12].replace('ROUTE_LIMIT', self.parameters['BGP']['ATTRIBUTES']['route-limit'][1])
-        bgp_template[14] = bgp_template[14].replace('PASSWORD_CIPHER', self.parameters['BGP']['ATTRIBUTES']['password cipher'][1])
-        bgp_template[15] = bgp_template[15].replace('MAX_HOP_NUMBER', self.parameters['BGP']['ATTRIBUTES']['ebgp-max-hop'][1])
-        bgp_template[16] = bgp_template[16].replace('ALLOW_IN_NUMBER', self.parameters['BGP']['ATTRIBUTES']['allow-as-loop'][1])
-        bgp_template[17] = bgp_template[17].replace('ROUTE_INTERVAL_NUMBER', self.parameters['BGP']['ATTRIBUTES']['route-update-interval'][1])
+        template[1] = template[1].replace('VPN_NAME', self.vpn)
+        template[4] = template[4].replace('TO_REPLACE', bgp['import-route rip'][1]) if bgp['import-route rip'][0] == True else template[4]
+        template[5] = template[5].replace('TO_REPLACE', bgp['maximum load'][1]) if bgp['maximum load'][0] == True else template[5]
+        template[6] = template[6].replace('TO_REPLACE', bgp['as-number'][1]) if bgp['as-number'][0] == True else template[6]
+        template[7] = template[7].replace('TO_REPLACE', bgp['description'][1]) if bgp['description'][0] == True else template[7]
+        template[12] = template[12].replace('TO_REPLACE', bgp['route-limit'][1]) if bgp['route-limit'][0] == True else template[12]
+        template[14] = template[14].replace('TO_REPLACE', bgp['password cipher'][1]) if bgp['password cipher'][0] == True else template[14]
+        template[15] = template[15].replace('TO_REPLACE', bgp['ebgp-max-hop'][1]) if bgp['ebgp-max-hop'][0] == True else template[15]
+        template[16] = template[16].replace('TO_REPLACE', bgp['allow-as-loop'][1]) if bgp['allow-as-loop'][0] == True else template[16]
+        template[17] = template[17].replace('TO_REPLACE', bgp['route-update'][1]) if bgp['route-update'][0] == True else template[17]
 
-        confirmation = []
-        for x in self.parameters['BGP']['ATTRIBUTES'].values():
-            confirmation.append(x[0])
-        
-        bgp_template_bkp = bgp_template
-        bgp_template = []
-        for x in range(len(bgp_template_bkp)):
-            if confirmation[x] == True:
-                bgp_template.append(bgp_template_bkp[x])
+        template.remove(' import-route static\n') if bgp['import-route static'][0] == False else template[3]
+        template.remove(' peer IP_PEER advertise-community\n') if bgp['advertise-community'][0] == False else template[8]
+        template.remove(' peer IP_PEER keep-all-routes\n') if bgp['keep-all-routes'][0] == False else template[9]
+        template.remove(' peer IP_PEER substitute-as\n') if bgp['substitute-as'][0] == False else template[10]
+        template.remove(' peer IP_PEER default-route-advertise\n') if bgp['default-route-advertise'][0] == False else template[13]
+        template.remove(' peer IP_PEER reflect-client\n') if bgp['reflect-client'][0] == False else template[18]
+
+        template = [x.replace('IP_PEER', peer) for x in template] if peer != "" else template
+        template = [x for x in template if not re.findall('IP_PEER', x )]
+        template = [x for x in template if not re.findall('TO_REPLACE', x)]
                 
-        return bgp_template
+        return template
 
-    def flow_service(self, flow_template): 
-        
-        flow_template[0] = flow_template[0].replace('SERVICE_POLICY', self.parameters['POLICY_OUT']['service-policy'])
-        flow_template[10] = flow_template[10].replace('QOS_PROFILE', self.parameters['INTER']['POLICY_OUT'])
-        flow_template[11] = flow_template[11].replace('SERVICE_POLICY', self.parameters['POLICY_OUT']['service-policy'])
-        flow_template[11] = flow_template[11].replace('SHAPE_AVERAGE', self.parameters['POLICY_OUT']['shape average'])
-        
-        if self.parameters['FLOW_QUEUE'][' class MM'][0] == True:
-            flow_template[1] = flow_template[1].replace('PERCENT_NUMBER', self.parameters['FLOW_QUEUE'][' class MM'][1])
-        if self.parameters['FLOW_QUEUE'][' class PLATA'][0] == True:
-            flow_template[2] = flow_template[2].replace('PERCENT_NUMBER', self.parameters['FLOW_QUEUE'][' class PLATA'][1])
-        if self.parameters['FLOW_QUEUE'][' class ORO'][0] == True:
-            flow_template[3] = flow_template[3].replace('PERCENT_NUMBER', self.parameters['FLOW_QUEUE'][' class ORO'][1])
-        if self.parameters['FLOW_QUEUE'][' class PLATINO'][0] == True:
-            flow_template[4] = flow_template[4].replace('PERCENT_NUMBER', self.parameters['FLOW_QUEUE'][' class PLATINO'][1])
-        if self.parameters['FLOW_QUEUE'][' class VIDEO'][0] == True:
-            flow_template[5] = flow_template[5].replace('PERCENT_NUMBER', self.parameters['FLOW_QUEUE'][' class VIDEO'][1])
-        if self.parameters['FLOW_QUEUE'][' class BRONCE'][0] == True:
-            flow_template[6] = flow_template[6].replace('PERCENT_NUMBER', self.parameters['FLOW_QUEUE'][' class BRONCE'][1])
-        
-        flow_template_bkp = flow_template
-        flow_template = []
-        for x in flow_template_bkp:
-            flow_template.append(x) if not re.findall('PERCENT_NUMBER', x) else flow_template
+    def flow_service(self, template): 
 
-        return flow_template
+        flow = self.parameters['FLOW_QUEUE']
+        
+        template[0] = template[0].replace('SERVICE_POLICY', self.parameters['POLICY_OUT']['service-policy'])
+        template[10] = template[10].replace('QOS_PROFILE', self.parameters['INTER']['POLICY_OUT'])
+        template[11] = template[11].replace('SERVICE_POLICY', self.parameters['POLICY_OUT']['service-policy'])
+        template[11] = template[11].replace('SHAPE_AVERAGE', self.parameters['POLICY_OUT']['shape average'])
     
-    def interface_service(self, inter_template, cabling_type):
+        template[1] = template[1].replace('PERCENT_NUMBER', flow[' class MM'][1]) if flow[' class MM'][0] == True else template[1]
+        template[2] = template[2].replace('PERCENT_NUMBER', flow[' class PLATA'][1]) if flow[' class PLATA'][0] == True else template[2]
+        template[3] = template[3].replace('PERCENT_NUMBER', flow[' class ORO'][1]) if flow[' class ORO'][0] == True else template[3]
+        template[4] = template[4].replace('PERCENT_NUMBER', flow[' class PLATINO'][1]) if flow[' class PLATINO'][0] == True else template[4]
+        template[5] = template[5].replace('PERCENT_NUMBER', flow[' class VIDEO'][1]) if flow[' class VIDEO'][0] == True else template[5]
+        template[6] = template[6].replace('PERCENT_NUMBER', flow[' class BRONCE'][1]) if flow[' class BRONCE'][0] == True else template[6]
+        
+        template = [x for x in template if not re.findall('PERCENT_NUMBER', x)]
 
-        inter_template[0] = inter_template[0].replace('X/X/X', self.parameters['NEW_INTERFACE'])
-        inter_template[5] = inter_template[5].replace('VPN_NAME', self.vpn)
+        return template
+    
+    def interface_service(self, template, cabling_type):
 
-        if self.parameters['INTER']['DESCRIP'] != "":
-            inter_template[6] = inter_template[6].replace('NAME_SERVICE', self.parameters['INTER']['DESCRIP'])
-        if self.parameters['INTER']['IP'] != "":
-            inter_template[7] = inter_template[7].replace('NAME_SERVICE', self.parameters['INTER']['IP']+' '+self.parameters['INTER']['MASK'])
-        if self.parameters['INTER']['IP_SEC'] != "":
-            inter_template[8] = inter_template[8].replace('NAME_SERVICE', self.parameters['INTER']['IP_SEC']+' '+self.parameters['INTER']['MASK_SEC'])
-        if self.parameters['INTER']['POLICY_IN'] != "":
-            inter_template[9] = inter_template[9].replace('NAME_SERVICE', self.parameters['INTER']['POLICY_IN'])
-        if self.parameters['INTER']['POLICY_OUT'] != "" and self.parameters['INTER']['POLICY_OUT'] == self.parameters['INTER']['POLICY_IN']:
-            inter_template[10] = inter_template[10].replace('NAME_SERVICE', self.parameters['INTER']['POLICY_OUT'])
-        if self.parameters['INTER']['POLICY_OUT'] != "" and self.parameters['INTER']['POLICY_OUT'] != self.parameters['INTER']['POLICY_IN']:
-            inter_template[11] = inter_template[11].replace('NAME_SERVICE', self.parameters['INTER']['POLICY_OUT'])
+        inter = self.parameters['INTER']
 
+        template[0] = template[0].replace('X/X/X', self.parameters['NEW_INTERFACE'])
+        template[5] = template[5].replace('VPN_NAME', self.vpn)
 
-        if self.parameters['INTER']['VLAN_ONE'] != "" and self.parameters['INTER']['VLAN_TWO'] != "":
+        template[6] = template[6].replace('NAME_SERVICE', inter['DESCRIP']) if inter['DESCRIP'] != "" else template[6]
+        template[7] = template[7].replace('NAME_SERVICE', inter['IP']+' '+inter['MASK']) if inter['IP'] != "" else template[7]
+        template[8] = template[8].replace('NAME_SERVICE', inter['IP_SEC']+' '+inter['MASK_SEC']) if inter['IP_SEC'] != "" else template[8] 
+        template[9] = template[9].replace('NAME_SERVICE', inter['POLICY_IN']) if inter['POLICY_IN'] != "" else template[9]
+
+        if inter['POLICY_OUT'] != "" and inter['POLICY_OUT'] == inter['POLICY_IN']:
+            template[10] = template[10].replace('NAME_SERVICE', inter['POLICY_OUT'])
+        if inter['POLICY_OUT'] != "" and inter['POLICY_OUT'] != inter['POLICY_IN']:
+            template[11] = template[11].replace('NAME_SERVICE', inter['POLICY_OUT'])
+
+        if inter['VLAN_ONE'] != "" and inter['VLAN_TWO'] != "":
             if cabling_type == 'fiber':
-                inter_template[0] = inter_template[0].replace('VLANC', self.parameters['INTER']['VLAN_ONE']+self.parameters['INTER']['VLAN_TWO'])
-                inter_template[4] = inter_template[4].replace('VLANUNO', self.parameters['INTER']['VLAN_ONE'])
-                inter_template[4] = inter_template[4].replace('VLANDOS', self.parameters['INTER']['VLAN_TWO'])
-                inter_template.remove(' Vlan-type dot1q VLANUNO\n')
+                template[0] = template[0].replace('VLANC', inter['VLAN_ONE'] + inter['VLAN_TWO'])
+                template[4] = template[4].replace('VLANUNO', inter['VLAN_ONE'])
+                template[4] = template[4].replace('VLANDOS', inter['VLAN_TWO'])
+                template.remove(' Vlan-type dot1q VLANUNO\n')
 
             if cabling_type == 'electric':
-                inter_template[0] = inter_template[0].replace('VLANC', self.parameters['INTER']['VLAN_TWO'])
-                inter_template[2] = inter_template[2].replace('VLANUNO', self.parameters['INTER']['VLAN_TWO'])
-                inter_template.remove(' encapsulation qinq-termination\n')
-                inter_template.remove(' qinq termination pe-vid VLANUNO ce-vid VLANDOS\n')
-                inter_template.remove(' arp broadcast enable\n')
+                template[0] = template[0].replace('VLANC', inter['VLAN_TWO'])
+                template[2] = template[2].replace('VLANUNO', inter['VLAN_TWO'])
+                template.remove(' encapsulation qinq-termination\n')
+                template.remove(' qinq termination pe-vid VLANUNO ce-vid VLANDOS\n')
+                template.remove(' arp broadcast enable\n')
 
-        if self.parameters['INTER']['VLAN_ONE'] != "" and self.parameters['INTER']['VLAN_TWO'] == "":
+        if inter['VLAN_ONE'] != "" and inter['VLAN_TWO'] == "":
             if cabling_type == 'fiber':
-                inter_template[0] = inter_template[0].replace('VLANC', self.parameters['INTER']['VLAN_ONE'])
-                inter_template[2] = inter_template[2].replace('VLANUNO', self.parameters['INTER']['VLAN_ONE'])
-                inter_template.remove(' encapsulation qinq-termination\n')
-                inter_template.remove(' qinq termination pe-vid VLANUNO ce-vid VLANDOS\n')
-                inter_template.remove(' arp broadcast enable\n')
+                template[0] = template[0].replace('VLANC', inter['VLAN_ONE'])
+                template[2] = template[2].replace('VLANUNO', inter['VLAN_ONE'])
+                template.remove(' encapsulation qinq-termination\n')
+                template.remove(' qinq termination pe-vid VLANUNO ce-vid VLANDOS\n')
+                template.remove(' arp broadcast enable\n')
 
             if cabling_type == 'electric':
-                inter_template[0] = inter_template[0].replace('.VLANC', "")
-                inter_template.remove(' Vlan-type dot1q VLANUNO\n')
-                inter_template.remove(' encapsulation qinq-termination\n')
-                inter_template.remove(' qinq termination pe-vid VLANUNO ce-vid VLANDOS\n')
-                inter_template.remove(' arp broadcast enable\n')
+                template[0] = template[0].replace('.VLANC', "")
+                template.remove(' Vlan-type dot1q VLANUNO\n')
+                template.remove(' encapsulation qinq-termination\n')
+                template.remove(' qinq termination pe-vid VLANUNO ce-vid VLANDOS\n')
+                template.remove(' arp broadcast enable\n')
 
-        if self.parameters['INTER']['VLAN_ONE'] == "" and self.parameters['INTER']['VLAN_TWO'] == "":
-            inter_template[0] = inter_template[0].replace('.VLANC', '')
-            inter_template.remove(' Vlan-type dot1q VLANUNO\n')
-            inter_template.remove(' encapsulation qinq-termination\n')
-            inter_template.remove(' qinq termination pe-vid VLANUNO ce-vid VLANDOS\n')
-            inter_template.remove(' arp broadcast enable\n')
+        if inter['VLAN_ONE'] == "" and inter['VLAN_TWO'] == "":
+            template[0] = template[0].replace('.VLANC', '')
+            template.remove(' Vlan-type dot1q VLANUNO\n')
+            template.remove(' encapsulation qinq-termination\n')
+            template.remove(' qinq termination pe-vid VLANUNO ce-vid VLANDOS\n')
+            template.remove(' arp broadcast enable\n')
 
-        inter_template.remove(' shutdown\n') if self.parameters['INTER']['STATUS'] == "" else inter_template
+        template.remove(' shutdown\n') if inter['STATUS'] == "" else template
         if not re.findall('/', self.parameters['NEW_INTERFACE']):
-            inter_template[0] = inter_template[0].replace('GigabitEthernet', 'Eth-Trunk') 
+            template[0] = template[0].replace('GigabitEthernet', 'Eth-Trunk')
 
-        inter_template_bkp = inter_template
-        inter_template = []
-        for x in inter_template_bkp:
-            if not re.findall('NAME_SERVICE', x):
-                inter_template.append(x)
+        template = [x for x in template if not re.findall('NAME_SERVICE', x)]
 
-        return inter_template
+        return template
 
     def routes_service(self, routes_template):
 

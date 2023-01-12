@@ -7,7 +7,7 @@ class Interface_filter_block:
 
         self.main_filter = Filter_main_blocks()
 
-    def interface_filter(self, core_interface, core_list):
+    def interface_filter(self, core_interface, core_list, parameters):
 
         data_type = 'interface'
         find_interface = list(filter(lambda linea: core_interface in linea, core_list))
@@ -16,6 +16,8 @@ class Interface_filter_block:
         for x in find_interface:
             if not re.findall('^ ', x) and re.findall(core_interface+'$', x):
                 interface_filtered.append(x)
+        
+        parameters['OLD_INTERFACE'] = interface_filtered[0] if interface_filtered != [] else ''
 
         block_list = self.main_filter.block(core_list, interface_filtered, data_type, '!', True, False)
         return block_list
