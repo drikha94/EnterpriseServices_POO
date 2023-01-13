@@ -11,6 +11,7 @@ from Filter_Blocks.Routes import Routes_filter_block
 from Filter_Blocks.Bgp import Bgp_filter_block
 from Filter_Blocks.Rip import Rip_filter_block
 from Filter_Blocks.Policy import Policy_filter_block
+from Filter_Blocks.Route_map import Map_filter_block
 
 """IMPORTACION DE LOS MODULOS QUE RETORNAN LOS DATOS OBTENIDOS DE LOS BLOQUES"""
 from Clean_Blocks.Get_Interface_Data_ import Get_Interface_Data
@@ -20,6 +21,7 @@ from Clean_Blocks.Get_Rip_Data import Get_rip_data
 from Clean_Blocks.Get_Routes_data import Get_routes_data
 from Clean_Blocks.Get_Possible_Peers import Get_peers_data
 from Clean_Blocks.Get_Traffic_Policy import Get_traffic_policy
+from Clean_Blocks.Get_Map_Data import Get_map_data
 
 class Controller:
 
@@ -73,7 +75,7 @@ class Controller:
         if block_list != []:
             self.parameters['BGP']['STATUS'] = True
             clean_bgp.get_data(block_list, self.parameters, self.patterns)
-            print(self.parameters)
+            #print(self.parameters)
     
     def rip_parameters(self):
 
@@ -81,11 +83,26 @@ class Controller:
             rip = Rip_filter_block()
             clean_rip = Get_rip_data()
             block_list = rip.rip_filter(self.parameters, self.patterns, self.core_list)
-            #print(block_list)
             if block_list != []:
                 clean_rip.get_data(block_list, self.parameters, self.patterns) 
                 self.parameters['RIP']['STATUS'] = True
+    
+    def map_parameters(self):
 
+        map = Map_filter_block()
+        clean_map = Get_map_data()
+        if self.parameters['BGP']['ATTRIBUTES']['route-policy_in'][0] != "":
+            block_list = map.map_filter(self.parameters, self.patterns, self.core_list, 'in')
+            if block_list != []:
+                for x in range(len(block_list)):
+                    clean_map.get_data(block_list[x], self.parameters, self.patterns, self.core_list, 'ROUTE_MAP_IN')
+        if self.parameters['BGP']['ATTRIBUTES']['route-policy_out'][0] != "":
+            block_list = map.map_filter(self.parameters, self.patterns, self.core_list, 'out')
+            if block_list != []:
+                for x in range(len(block_list)):
+                    clean_map.get_data(block_list[x], self.parameters, self.patterns, self.core_list, 'ROUTE_MAP_OUT')
+
+        print(self.parameters)
 
     def policy_parameters(self):
 
@@ -152,6 +169,7 @@ manager.peers_parameters()
 manager.routes_parameters()
 manager.bgp_parameters()
 manager.rip_parameters()
+manager.map_parameters()
 manager.policy_parameters()
 #manager.template()
 

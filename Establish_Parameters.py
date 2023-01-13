@@ -65,5 +65,26 @@ parameters = {
     },
     'ROUTES': [],
     'NEW_INTERFACE': '55',
-    'OLD_INTERFACE': ''
+    'OLD_INTERFACE': '',
+    'ROUTE_MAP_IN':{
+        'rule': [],                                   #EL TRUE HACER REFERENCIA AL PERMIT, EL FALSE AL DENY, LAS COMILLAS AL NMR
+        'set local-preference': [],
+        'match interface': [],
+        'match ip address prefix-list': [],
+        'match ipv6 address prefix-list': [],     #SET ALARM
+        'set as-path prepend': [],                    #SET ALARM
+        'set extcommunity': [],
+        'match tag': []                               #SET ALARM
+    },
+    'ROUTE_MAP_OUT':{
+        'rule': [],                                   #EL TRUE HACER REFERENCIA AL PERMIT, EL FALSE AL DENY, LAS COMILLAS AL NMR
+        'set local-preference': [],
+        'match interface': [],
+        'match ip address prefix-list': [],                               
+        'match ipv6 address prefix-list': [],
+        'set as-path prepend': [],
+        'set extcommunity': [],
+        'match tag': [],
+        'match ip address' : []
+    }
 }
