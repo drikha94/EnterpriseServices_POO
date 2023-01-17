@@ -21,7 +21,66 @@ class Service_template:
         policy_template = [x.replace('ENLACE_XX', self.parameters['INTER']['POLICY_IN']) for x in policy_template]
 
         return policy_template
-       
+    
+    def prefix_service(self):
+
+        prefix = self.parameters['IP_PREFIX']
+        prefix_to_huawei = []
+        for x in prefix:
+            x = x.replace('ip prefix-list ', 'ip ip-prefix ').replace(' seq ', ' index ').replace(' le ', ' less-equal ').replace('/', ' ')
+            prefix_to_huawei.append(x)
+        
+        prefix_to_huawei.append('#\n')
+        
+        return prefix_to_huawei
+
+    def map_service(self, template_map, num, in_out):
+        
+        if in_out == 'in':
+            main_key = 'ROUTE_MAP_IN'
+            bgp_key = 'route-policy_in'
+            
+        if in_out == 'out':
+            main_key = 'ROUTE_MAP_OUT'
+            bgp_key = 'route-policy_out'
+
+        template = template_map.copy()
+        map = self.parameters[main_key]
+        template[0] = template[0].replace('NAME_POLICY', self.parameters['BGP']['ATTRIBUTES'][bgp_key][1])
+        template[0] = template[0].replace('NAME_RULE', 'permit') if map['rule'][num][0] == True else template[0]
+        template[0] = template[0].replace('NAME_RULE', 'deny') if map['rule'][num][0] == False else template[0]
+        template[0] = template[0].replace('NUMBER_RULE', map['rule'][num][1]) if map['rule'][num][1] != '' else template[0]
+        
+        if map['set local-preference'][num][0] ==True:
+            template[1] = template[1].replace('TO_REPLACE', map['set local-preference'][num][1])
+        
+        if map['match ip address prefix-list'][num][0] == True:
+            template[2] = template[2].replace('TO_REPLACE', map['match ip address prefix-list'][num][1])
+
+        if map['match interface'][num][0] == True:
+            pass #SET ALARM
+            
+        if map['set as-path prepend'][num][0] == True:
+            template[5] = template[5].replace('TO_REPLACE', map['set as-path prepend'][num][1])
+
+        if map['set extcommunity'][num][0] == True:
+            rt = map['set extcommunity'][num][1]
+            for i in range(len(map['set extcommunity'][num][1])):
+                template[7] = template[7].replace('TO_REPLACE', '')
+                template[7] = template[7] + f' rt {rt[i]}'
+                if i == len(rt)-1:
+                    template[7] = template[7] + '\n'
+            
+        if map['match tag'][num][0] == True:
+            template[8] = template[8].replace('TO_REPLACE', map['match tag'][num][1])
+        
+        if map['match ipv6 address prefix-list'][num][0] == True:
+            pass  #SET ALARM
+            
+        template = [x for x in template if not re.findall('TO_REPLACE', x)]
+
+        return template
+            
     def vpn_service(self, vpn_template):
         
         vpn_template[0] = vpn_template[0].replace('VPN_NAME', self.vpn)
@@ -84,6 +143,8 @@ class Service_template:
         template[15] = template[15].replace('TO_REPLACE', bgp['ebgp-max-hop'][1]) if bgp['ebgp-max-hop'][0] == True else template[15]
         template[16] = template[16].replace('TO_REPLACE', bgp['allow-as-loop'][1]) if bgp['allow-as-loop'][0] == True else template[16]
         template[17] = template[17].replace('TO_REPLACE', bgp['route-update'][1]) if bgp['route-update'][0] == True else template[17]
+        template[19] = template[19].replace('TO_REPLACE', bgp['route-policy_in'][1]) if bgp['route-policy_in'][0] == True else template[19]
+        template[20] = template[20].replace('TO_REPLACE', bgp['route-policy_out'][1]) if bgp['route-policy_out'][0] == True else template[20]
 
         template.remove(' import-route static\n') if bgp['import-route static'][0] == False else template[3]
         template.remove(' peer IP_PEER advertise-community\n') if bgp['advertise-community'][0] == False else template[8]

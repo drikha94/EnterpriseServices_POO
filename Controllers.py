@@ -22,6 +22,7 @@ from Clean_Blocks.Get_Routes_data import Get_routes_data
 from Clean_Blocks.Get_Possible_Peers import Get_peers_data
 from Clean_Blocks.Get_Traffic_Policy import Get_traffic_policy
 from Clean_Blocks.Get_Map_Data import Get_map_data
+from Clean_Blocks.Get_Prefix_Data import Get_prefix_data
 
 class Controller:
 
@@ -94,15 +95,25 @@ class Controller:
         if self.parameters['BGP']['ATTRIBUTES']['route-policy_in'][0] != "":
             block_list = map.map_filter(self.parameters, self.patterns, self.core_list, 'in')
             if block_list != []:
+                self.parameters['ROUTE_MAP_IN']['route_policy_quantity'] = len(block_list)
                 for x in range(len(block_list)):
                     clean_map.get_data(block_list[x], self.parameters, self.patterns, self.core_list, 'ROUTE_MAP_IN')
+
         if self.parameters['BGP']['ATTRIBUTES']['route-policy_out'][0] != "":
             block_list = map.map_filter(self.parameters, self.patterns, self.core_list, 'out')
             if block_list != []:
+                self.parameters['ROUTE_MAP_OUT']['route_policy_quantity'] = len(block_list)
                 for x in range(len(block_list)):
                     clean_map.get_data(block_list[x], self.parameters, self.patterns, self.core_list, 'ROUTE_MAP_OUT')
+        
+    def prefix_parameters(self):
 
-        print(self.parameters)
+        prefix = Get_prefix_data()
+        if self.parameters['ROUTE_MAP_IN']['match ip address prefix-list'] != []:
+            prefix.get_data(self.parameters, self.patterns, self.core_list, 'in')
+        
+        if self.parameters['ROUTE_MAP_OUT']['match ip address prefix-list'] != []:
+            prefix.get_data(self.parameters, self.patterns, self.core_list, 'out')
 
     def policy_parameters(self):
 
@@ -131,6 +142,17 @@ class Controller:
 
         if self.parameters['INTER']['VPN'] != "":
             print("".join(template_service_obj.vpn_service(vpn_template)))
+        
+        if self.parameters['IP_PREFIX'] != []:
+            print(("".join(template_service_obj.prefix_service())))
+        
+        if self.parameters['BGP']['ATTRIBUTES']['route-policy_in'][0] == True:
+            for x in range(self.parameters['ROUTE_MAP_IN']['route_policy_quantity']):
+                print("".join(template_service_obj.map_service(policy_map_template, x, 'in')))
+        
+        if self.parameters['BGP']['ATTRIBUTES']['route-policy_out'][0] == True:
+            for x in range(self.parameters['ROUTE_MAP_OUT']['route_policy_quantity']):
+                print("".join(template_service_obj.map_service(policy_map_template, x, 'out')))
     
         if self.parameters['RIP']['STATUS'] == True:
             print("".join(template_service_obj.rip_service(rip_template)))
@@ -147,8 +169,6 @@ class Controller:
             print("".join(template_service_obj.routes_service(routes_template)))
         
         #print(self.parameters)
-
-    
 
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
 core_int = "9/3.83210"
@@ -170,8 +190,9 @@ manager.routes_parameters()
 manager.bgp_parameters()
 manager.rip_parameters()
 manager.map_parameters()
+manager.prefix_parameters()
 manager.policy_parameters()
-#manager.template()
+manager.template()
 
 
 

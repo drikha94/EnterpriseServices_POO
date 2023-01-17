@@ -34,25 +34,12 @@ class Get_map_data:
             parameters[map]['match interface'].append(match_int)
         
         def match_ip():
-            match_ip_list = [False, '', []]
+            match_ip_list = [False, '']
             match_ip = "".join((filter(lambda x: "match ip address prefix-list" in x, block_list)))
             match_ip = match_ip.replace('match ip address prefix-list', '').strip() if match_ip != "" else ""
             if match_ip != "":
                 match_ip_list[0] = True
                 match_ip_list[1] = match_ip
-                prefix_list = list((filter(lambda x: f"ip prefix-list {match_ip} " in x, core_list)))
-                if prefix_list != []:
-                    for x in range(len(prefix_list)):
-                        list_fragment = ['', '', '', '']
-                        if re.findall(r'seq \d+', prefix_list[x]):
-                            list_fragment[0] = "".join(re.findall(r'seq \d+', prefix_list[x])).replace('seq', '').strip()
-                        if re.findall('permit', prefix_list[x]):
-                           list_fragment[1] = True
-                        if re.findall(r'\d+[.]\d+[.]\d+[.]\d+[/]\d+', prefix_list[x]):
-                            list_fragment[2] = "".join(re.findall(r'\d+[.]\d+[.]\d+[.]\d+[/]\d+', prefix_list[x])).replace('/', ' ').strip()
-                        if re.findall(r'le \d+', prefix_list[x]):
-                            list_fragment[3] = "".join(re.findall(r'le \d+', prefix_list[x])).replace('le', ' ').strip()
-                        match_ip_list[2] = list_fragment
             parameters[map]['match ip address prefix-list'].append(match_ip_list)
 
         def match_ipv6():

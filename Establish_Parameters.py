@@ -42,7 +42,7 @@ parameters = {
             'route-update': [False, ''],
             'reflect-client': [False, 'N/A'],
             'route-policy_in': [False, ''],
-            'route-policy_out': [False, '']
+            'route-policy_out': [False, ''],
         }
     },
     'RIP': {
@@ -67,14 +67,15 @@ parameters = {
     'NEW_INTERFACE': '55',
     'OLD_INTERFACE': '',
     'ROUTE_MAP_IN':{
+        'route_policy_quantity': 0,
         'rule': [],                                   #EL TRUE HACER REFERENCIA AL PERMIT, EL FALSE AL DENY, LAS COMILLAS AL NMR
         'set local-preference': [],
-        'match interface': [],
+        'match interface': [],                        #SET ALARM
         'match ip address prefix-list': [],
-        'match ipv6 address prefix-list': [],     #SET ALARM
-        'set as-path prepend': [],                    #SET ALARM
+        'match ipv6 address prefix-list': [],         #SET ALARM
+        'set as-path prepend': [],                    
         'set extcommunity': [],
-        'match tag': []                               #SET ALARM
+        'match tag': []                               
     },
     'ROUTE_MAP_OUT':{
         'rule': [],                                   #EL TRUE HACER REFERENCIA AL PERMIT, EL FALSE AL DENY, LAS COMILLAS AL NMR
@@ -86,5 +87,6 @@ parameters = {
         'set extcommunity': [],
         'match tag': [],
         'match ip address' : []
-    }
+    },
+    'IP_PREFIX': []
 }

@@ -14,6 +14,23 @@ policy_template = [
     f'#\n',
     f'#'
 ]
+prefix_template = [
+    f'ip ip-prefix PREFIX_NAME index INDEX_NUMBER RULE_NAME IP_MASK\n',   #less-equal 25
+    f'#\n'
+]
+
+policy_map_template = [
+    f'route-policy NAME_POLICY NAME_RULE node NUMBER_RULE\n',
+    f' apply local-preference TO_REPLACE\n',
+    f' if-match ip-prefix TO_REPLACE\n',
+    f' if-match ip-prefix TO_REPLACE\n',
+    f' if-match as-path-filter TO_REPLACE\n',
+    f' apply as-path TO_REPLACE additive\n',
+    f' if-match community-filter TO_REPLACE\n',
+    f' apply extcommunityTO_REPLACE',
+    f' if-match tag TO_REPLACE\n',
+    f'#\n'
+]
 
 vpn_template = [
     f'ip vpn-instance VPN_NAME\n',
@@ -57,7 +74,10 @@ bgp_template = [
     f' peer IP_PEER allowas-in TO_REPLACE\n',
     f' peer IP_PEER route-update-interval TO_REPLACE\n',
     f' peer IP_PEER reflect-client\n',
-    f' peer IP_PEER enable\n'
+    f' pree IP_PEER route-policy TO_REPLACE import\n',
+    f' pree IP_PEER route-policy TO_REPLACE export\n',
+    f' peer IP_PEER enable\n',
+    f'#\n'
 ]
 
 flow_template = [
