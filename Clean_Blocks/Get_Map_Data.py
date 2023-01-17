@@ -2,19 +2,20 @@ import re
 
 class Get_map_data:
 
-    def get_data(self, block_list, parameters, patterns, core_list, map):
+    def get_data(self, block_list, parameters, patterns, map):
         
         def rule():
             
             rule = [False, '']
-            permit = "".join(re.findall(r'permit \d+', block_list[0])).replace('permit ', '').strip()
-            deny = "".join(re.findall(r'deny \d+', block_list[0])).replace('deny ', '').strip()
-            if permit != "":
-                rule[0] = True
-                rule[1] = permit
-            if deny != "":
-                rule[0] = False
-                rule[1] = deny
+            if patterns['id'] == 1:
+                permit = "".join(re.findall(r'permit \d+', block_list[0])).replace('permit ', '').strip()
+                deny = "".join(re.findall(r'deny \d+', block_list[0])).replace('deny ', '').strip()
+                if permit != "":
+                    rule[0] = True
+                    rule[1] = permit
+                if deny != "":
+                    rule[0] = False
+                    rule[1] = deny
             parameters[map]['rule'].append(rule)
 
         def set_local_preference():
@@ -35,15 +36,24 @@ class Get_map_data:
         
         def match_ip():
             match_ip_list = [False, '']
-            match_ip = "".join((filter(lambda x: "match ip address prefix-list" in x, block_list)))
-            match_ip = match_ip.replace('match ip address prefix-list', '').strip() if match_ip != "" else ""
-            if match_ip != "":
-                match_ip_list[0] = True
-                match_ip_list[1] = match_ip
+
+            if patterns['id'] == 1:
+                match_ip = "".join((filter(lambda x: "match ip address prefix-list" in x, block_list)))
+                match_ip = match_ip.replace('match ip address prefix-list', '').strip() if match_ip != "" else ""
+                if match_ip != "":
+                    match_ip_list[0] = True
+                    match_ip_list[1] = match_ip
+            
+            if patterns['id'] == 2:
+                match_ip = "".join((filter(lambda x: "if destination in " in x, block_list)))
+                match_ip = "".join((filter(lambda x: "if source in " in x, block_list))) if match_ip == "" else match_ip
+                if match_ip != "":
+                    match_ip_list[0] = True
+                    match_ip_list[1] = match_ip.replace('if destination in ', '').replace('if source in ', '').replace('then', '').strip()
             parameters[map]['match ip address prefix-list'].append(match_ip_list)
 
         def match_ipv6():
-            match_6 = [False, '', []]
+            match_6 = [False, '']
             match_ipv6 = "".join((filter(lambda x: "match ipv6 address prefix-list" in x, block_list)))
             if match_ipv6 != "":
                 match_ipv6 = match_ipv6.replace('match ipv6 address prefix-list', '').strip()

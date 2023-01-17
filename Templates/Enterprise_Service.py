@@ -12,7 +12,7 @@ policy_template = [
     f' statistics enable\n', 
     f' classifier default behavior ENLACE_XX\n',
     f'#\n',
-    f'#'
+    f'#\n'
 ]
 prefix_template = [
     f'ip ip-prefix PREFIX_NAME index INDEX_NUMBER RULE_NAME IP_MASK\n',   #less-equal 25
@@ -51,7 +51,7 @@ rip_template = [
     f' peer PEER_IP\n',
     f' version 2\n',
     f' undo summary\n',
-    f'#'
+    f'#\n'
 ]
 
 bgp_template = [
@@ -115,9 +115,10 @@ interface_template = [
     ' arp broadcast enable\n',
     'commit\n',
     '#\n',
-    '#'
+    '#\n'
 ]
 
 routes_template = [
-    'ip route-static vpn-instance VPN_NAME IPFINAL_MASK_IPPEER description *** VPN_NAME REF:REF_NAME ***\n'
+    'ip route-static vpn-instance VPN_NAME IPFINAL_MASK_IPPEER description *** VPN_NAME REF:REF_NAME ***\n',
+    '#\n'
 ]

@@ -64,7 +64,9 @@ class Get_bgp_data:
         
         def password_cipher():
             pc = "".join(filter(lambda x: "password" in x, block_list))
-            bgp['password cipher'][0] = True if pc != "" else False
+            if pc != "":
+                bgp['password cipher'][0] = True
+                bgp['password cipher'][1] = 'FRIda@17' if parameters['INTER']['VPN'] == 'BCOPATAGONIA' else bgp['password cipher'][1]
 
         def ebgp_max_hop():
             emh = "".join(filter(lambda x: "ebgp-multihop " in x, block_list))
@@ -90,14 +92,22 @@ class Get_bgp_data:
                 bgp['route-update'][0] = True
                 bgp['route-update'][1] = ai
 
-        def route_map(traffic, key, to_replace_one, to_replace_two):
+        def route_map(traffic, key, to_replace_two):
             if patterns['id'] == 1:
+                to_replace_one = 'route-map ' 
                 for x in block_list:
                     if re.findall(r'route-map.+ '+traffic, x):
                         rm = re.findall(r'route-map.+ '+traffic, x)
                         bgp[key][0] = True
                         bgp[key][1] = "".join(rm).replace(to_replace_one, '').replace(to_replace_two, '').strip()
 
+            if patterns['id'] == 2:
+                to_replace_one = 'route-policy ' 
+                for x in block_list:
+                    if re.findall(r'route-policy.+ '+traffic, x) and not re.findall('default_policy_pass_all', x):
+                        rm = re.findall(r'route-policy.+ '+traffic, x)
+                        bgp[key][0] = True
+                        bgp[key][1] = "".join(rm).replace(to_replace_one, '').replace(to_replace_two, '').strip()
 
         def rd_version_two():
             if patterns['id'] == 2:
@@ -106,8 +116,10 @@ class Get_bgp_data:
 
         import_route_static(), load_balancing(), default_route(), import_route_rip(), remote_as(), description()
         keep_all_routes(), route_limit(), advertise_community(), substitute_as(), password_cipher(), ebgp_max_hop()
-        allow_as_loop(), reflect_client(), route_update_interval(), route_map('in', 'route-policy_in', 'route-map ', ' in')
-        route_map('out', 'route-policy_out', 'route-map ', ' out'), rd_version_two()
+        allow_as_loop(), reflect_client(), route_update_interval(), rd_version_two()
+
+        route_map('in', 'route-policy_in', ' in')
+        route_map('out', 'route-policy_out', ' out')
 
 
 

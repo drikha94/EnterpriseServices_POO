@@ -36,7 +36,7 @@ parameters = {
             'fake-as': [True, ''],
             'route-limit': [False, ''],
             'default-route-advertise': [False, 'N/A'],
-            'password cipher': [False, ''],
+            'password cipher': [False, 'XXXX'],
             'ebgp-max-hop': [False, ''],
             'allow-as-loop': [False, ''],
             'route-update': [False, ''],
@@ -78,6 +78,7 @@ parameters = {
         'match tag': []                               
     },
     'ROUTE_MAP_OUT':{
+        'route_policy_quantity': 0,
         'rule': [],                                   #EL TRUE HACER REFERENCIA AL PERMIT, EL FALSE AL DENY, LAS COMILLAS AL NMR
         'set local-preference': [],
         'match interface': [],

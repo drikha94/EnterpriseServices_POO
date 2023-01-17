@@ -26,11 +26,15 @@ class Service_template:
 
         prefix = self.parameters['IP_PREFIX']
         prefix_to_huawei = []
-        for x in prefix:
-            x = x.replace('ip prefix-list ', 'ip ip-prefix ').replace(' seq ', ' index ').replace(' le ', ' less-equal ').replace('/', ' ')
-            prefix_to_huawei.append(x)
+
+        if not re.findall('ip ip-prefix', "".join(prefix)):
+            for x in prefix:
+                x = x.replace('ip prefix-list ', 'ip ip-prefix ').replace(' seq ', ' index ').replace(' le ', ' less-equal ').replace('/', ' ')
+                prefix_to_huawei.append(x)
         
-        prefix_to_huawei.append('#\n')
+            prefix_to_huawei.append('#\n')
+        
+        else: prefix_to_huawei = prefix
         
         return prefix_to_huawei
 
@@ -46,9 +50,10 @@ class Service_template:
 
         template = template_map.copy()
         map = self.parameters[main_key]
+
         template[0] = template[0].replace('NAME_POLICY', self.parameters['BGP']['ATTRIBUTES'][bgp_key][1])
-        template[0] = template[0].replace('NAME_RULE', 'permit') if map['rule'][num][0] == True else template[0]
-        template[0] = template[0].replace('NAME_RULE', 'deny') if map['rule'][num][0] == False else template[0]
+        template[0] = template[0].replace('NAME_RULE', 'permit') if map['rule'][num][0] == True and map['rule'][num][1] != "" else template[0]
+        template[0] = template[0].replace('NAME_RULE', 'deny') if map['rule'][num][0] == False and map['rule'][num][1] != "" else template[0]
         template[0] = template[0].replace('NUMBER_RULE', map['rule'][num][1]) if map['rule'][num][1] != '' else template[0]
         
         if map['set local-preference'][num][0] ==True:
