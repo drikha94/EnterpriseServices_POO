@@ -2,14 +2,16 @@ import re
 
 class Get_traffic_policy:
 
-    def get_data_policy_in(self, block_list, parameters, patterns):
+    def get_data_policy_in(self, block_list, parameters):
         
         policy_in = re.findall(r'\d+', "".join(block_list))
         if policy_in != []:
-            first_value = int(int(policy_in[0])) / 1000
+            if not re.findall(r'\d+ mbps', "".join(block_list)):
+                first_value = int(int(policy_in[0])) / 1000
+            else:
+                first_value = int(int(policy_in[0])) * 1000
             policy_in[0] = str(int(first_value))
             parameters['POLICY_IN'] = policy_in
-        #print(parameters['POLICY_IN'])
 
     def get_data_policy_out(self, block_list, parameters):
 

@@ -132,7 +132,7 @@ class Controller:
         if self.parameters['INTER']['POLICY_IN'] != "":
             block_list = policy.policy_filter(self.parameters, self.core_list, 'INTER', 'POLICY_IN')
             if block_list != []:
-                clean_policy.get_data_policy_in(block_list, self.parameters, self.patterns)
+                clean_policy.get_data_policy_in(block_list, self.parameters)
 
         if self.parameters['INTER']['POLICY_OUT'] != "" and self.parameters['INTER']['POLICY_OUT'] != self.parameters['INTER']['POLICY_IN']:
             block_list = policy.policy_filter(self.parameters, self.core_list, 'INTER', 'POLICY_OUT')
