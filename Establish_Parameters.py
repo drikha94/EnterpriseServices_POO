@@ -64,7 +64,7 @@ parameters = {
         ' class VIDEO':[False, '']
     },
     'ROUTES': [],
-    'NEW_INTERFACE': '55',
+    'NEW_INTERFACE': '5/5/5',
     'OLD_INTERFACE': '',
     'ROUTE_MAP_IN':{
         'route_policy_quantity': 0,
@@ -89,5 +89,9 @@ parameters = {
         'match tag': [],
         'match ip address' : []
     },
-    'IP_PREFIX': []
+    'IP_PREFIX': [],
+    'DISPLAY_COMMAND':{
+        'interface': 'GigabitEthernet',
+        'vlan': ''
+    }
 }

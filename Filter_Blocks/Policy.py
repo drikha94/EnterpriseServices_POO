@@ -7,7 +7,7 @@ class Policy_filter_block:
 
         self.main_filter = Filter_main_blocks()
 
-    def policy_filter(self, parameters, patterns, core_list, key_one, key_two):
+    def policy_filter(self, parameters, core_list, key_one, key_two):
 
         data_type = 'traffic_policy'
         policy = parameters[key_one][key_two]
@@ -20,6 +20,7 @@ class Policy_filter_block:
             return block_list
         else:
             return []
+
 
             
 

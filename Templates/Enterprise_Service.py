@@ -1,3 +1,16 @@
+headers_template = """######################################
+######### ENTERPRISE SERVICE #########
+######################################
+#
+#
+"""
+
+ref_id_template = """########### REF TO_REPLACE
+#
+#
+"""
+
+
 policy_template = [
     f'traffic classifier default\n',
     f' if-match any\n',
@@ -119,6 +132,5 @@ interface_template = [
 ]
 
 routes_template = [
-    'ip route-static vpn-instance VPN_NAME IPFINAL_MASK_IPPEER description *** VPN_NAME REF:REF_NAME ***\n',
-    '#\n'
+    'ip route-static vpn-instance VPN_NAME IPFINAL_MASK_IPPEER description *** VPN_NAME REF:REF_NAME ***\n'
 ]
