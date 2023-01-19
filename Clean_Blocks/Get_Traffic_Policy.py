@@ -21,7 +21,10 @@ class Get_traffic_policy:
             sa = "".join(filter(lambda x: "police cir" in x, block_list))
             sa = sa.replace("police cir", "").strip().split(" ")
         if sa[0].isdigit():
-            parameters['POLICY_OUT']['shape average'] = str(int(int(sa[0]) / 1000))
+            if not re.findall('mbps', "".join(sa)):
+                parameters['POLICY_OUT']['shape average'] = str(int(int(sa[0]) / 1000))
+            if re.findall('mbps', "".join(sa)):
+                parameters['POLICY_OUT']['shape average'] = str(int(int(sa[0]) * 1000))
 
         sp = "".join(filter(lambda x: "service-policy" in x, block_list)).replace("service-policy ", "").strip()
         parameters['POLICY_OUT']['service-policy'] = sp.replace("service-policy ", "").strip()

@@ -6,10 +6,12 @@ import re
 #IMPORTACION DE LOS MODULOS QUE QUE CONTIENEN LOS TEMPLATE
 from Templates.Enterprise_Service import *
 from Templates.Display_command import *
+from Templates.Show_command import *
 
 #IMPORTACION DE LOS MODULOS QUE REEMPLAZAN LOS DATOS EN LOS TEMPLATE
 from Replacement.Replacement_enterprise import Service_template
 from Replacement.Replacement_display import Display_template
+from Replacement.Replacement_show import Show_template
 
 #IMPORTACION DE LOS MODULOS QUE RETORNAN UN BLOQUE EN ESPECIFICO DEL CORE
 from Filter_Blocks.Interface import Interface_filter_block
@@ -37,9 +39,11 @@ class Controller:
 
         self.path = path
         self.core_interface = core_interface
-        self.path_script = work_space + f'/CFG_{h4_name}_SCRIPT.txt'
-        self.path_display = f'{work_space}/CML_{h4_name}_CHECK.txt'
         self.core_list = open_txt(self.path)
+        self.core_name = "".join(filter(lambda x: "hostname " in x, self.core_list)).replace('hostname ', '').strip()
+        self.path_script = work_space + f'/CFG_{h4_name}_SCRIPT.txt'
+        self.path_display = f'{work_space}/CML_{h4_name}_POSTCHECK.txt'
+        self.path_show = f'{work_space}/CML_{self.core_name}_PRECHECK.txt'
         self.patterns = version.check_version(self.core_list)
         self.parameters = parameters
         self.possible_peers = []
@@ -50,6 +54,7 @@ class Controller:
         clean_interface = Get_Interface_Data()
         block_list = interface.interface_filter(self.core_interface, self.core_list, self.parameters)
         clean_interface.get_data(self.parameters, block_list, self.patterns)
+        print(self.parameters['INTER'])
 
     def vpn_parameters(self):
 
@@ -188,14 +193,18 @@ class Controller:
         template_display_obj = Display_template(self.parameters, self.path_display, display_template)
         template_display_obj.display_command()
     
-        
-        
+    def template_show(self):
 
+        template_display_obj = Show_template(self.parameters, self.path_show, self.patterns)
+        template_display_obj.show_command()
+
+    
+        
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
-core_int = "12/13.1459"
+core_int = "12/14.555100"
 
 path_v2 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Octubre/Bahia Blanca/Old device/CORE-BHB9.gics.ar.telefonica.com-2022-09-30_02_14_52.txt"
-core_int_v2 = "0/4/1/16.31262000"
+core_int_v2 = "0/4/1/16.140110"
 
 path_v3 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Junio/Bahia Blanca/Old Device/CORE-BHB7.gics.ar.telefonica.com-2022-06-02_02_14_15.txt"
 core_int_v3 = "5/0/5.999"
@@ -207,19 +216,28 @@ work_space = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre
 
 h4_name = 'H4-SJ-SJN01'
 
+def call_funtion(path, core_int, work_space, h4_name):
+    manager = Controller(path, core_int, work_space, h4_name)
+    manager.interface_parameters()
 
-manager = Controller(path, core_int, work_space, h4_name)
-manager.interface_parameters()
-manager.vpn_parameters()
-manager.peers_parameters()
-manager.routes_parameters()
-manager.bgp_parameters()
-manager.rip_parameters()
-manager.map_parameters()
-manager.prefix_parameters()
-manager.policy_parameters()
-manager.template_enterprise()
-manager.template_display()
+call_funtion(path, core_int, work_space, h4_name)
+call_funtion(path_v2, core_int_v2, work_space, h4_name)
+call_funtion(path_v3, core_int_v3, work_space, h4_name)
+call_funtion(path_v4, core_int_v4, work_space, h4_name)
+
+#manager = Controller(path, core_int, work_space, h4_name)
+#manager.interface_parameters()
+#manager.vpn_parameters()
+#manager.peers_parameters()
+#manager.routes_parameters()
+#manager.bgp_parameters()
+#manager.rip_parameters()
+#manager.map_parameters()
+#manager.prefix_parameters()
+#manager.policy_parameters()
+#manager.template_enterprise()
+#manager.template_display()
+#manager.template_show()
 
 
 

@@ -90,6 +90,7 @@ bgp_template = [
     f' pree IP_PEER route-policy TO_REPLACE import\n',
     f' pree IP_PEER route-policy TO_REPLACE export\n',
     f' peer IP_PEER enable\n',
+    f'#\n',
     f'#\n'
 ]
 
