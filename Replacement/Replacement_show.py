@@ -28,12 +28,21 @@ class Show_template:
                 command_ping_peer = f'ping {peer}\n'
             
             if self.patterns['id'] == 1:
-                command_bgp_one = f'show bgp vpnv4 unicast vrf {vpn} neighbors {peer} routes\n'
-                command_bgp_two = f'show bgp vpnv4 unicast vrf {vpn} neighbors {peer} advertised-routes\n'
+                if vpn != "":
+                    command_bgp_one = f'show bgp vpnv4 unicast vrf {vpn} neighbors {peer} routes\n'
+                    command_bgp_two = f'show bgp vpnv4 unicast vrf {vpn} neighbors {peer} advertised-routes\n'
+                else:
+                    command_bgp_one = f'show bgp vpnv4 unicast all neighbors {peer} routes\n'
+                    command_bgp_two = f'show bgp vpnv4 unicast all neighbors {peer} advertised-routes\n'
 
             if self.patterns['id'] == 2:
-                command_bgp_one = f'show bgp vrf {vpn} neighbors {peer} routes\n'
-                command_bgp_two = f'show bgp vrf {vpn} neighbors {peer} advertised-routes\n'
+                if vpn != "":
+                    command_bgp_one = f'show bgp vrf {vpn} neighbors {peer} routes\n'
+                    command_bgp_two = f'show bgp vrf {vpn} neighbors {peer} advertised-routes\n'
+                else:
+                    command_bgp_one = f'show bgp vpnv4 unicast neighbors {peer} routes\n'
+                    command_bgp_two = f'show bgp vpnv4 unicast neighbors {peer} advertised-routes\n'
+
 
             new_template.append(command_ping_peer)
             new_template.append(command_bgp_one)

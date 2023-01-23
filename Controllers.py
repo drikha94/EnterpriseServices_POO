@@ -1,12 +1,15 @@
 from Check_Version import version
 from Open_File import open_txt, append_txt
 from Establish_Parameters import parameters
+from Reset_parameters import reset_establish_parameters
+from read_excel import excel_list
 import re
 
 #IMPORTACION DE LOS MODULOS QUE QUE CONTIENEN LOS TEMPLATE
 from Templates.Enterprise_Service import *
 from Templates.Display_command import *
 from Templates.Show_command import *
+from Templates.Management import Management_template
 
 #IMPORTACION DE LOS MODULOS QUE REEMPLAZAN LOS DATOS EN LOS TEMPLATE
 from Replacement.Replacement_enterprise import Service_template
@@ -35,7 +38,7 @@ from Clean_Blocks.Get_Prefix_Data import Get_prefix_data
 
 class Controller:
 
-    def __init__(self, path, core_interface, work_space, h4_name):
+    def __init__(self, path, core_interface, work_space, h4_name, device_type):
 
         self.path = path
         self.core_interface = core_interface
@@ -47,6 +50,7 @@ class Controller:
         self.patterns = version.check_version(self.core_list)
         self.parameters = parameters
         self.possible_peers = []
+        self.device_type = device_type
 
     def interface_parameters(self):
 
@@ -54,7 +58,6 @@ class Controller:
         clean_interface = Get_Interface_Data()
         block_list = interface.interface_filter(self.core_interface, self.core_list, self.parameters)
         clean_interface.get_data(self.parameters, block_list, self.patterns)
-        print(self.parameters['INTER'])
 
     def vpn_parameters(self):
 
@@ -148,6 +151,14 @@ class Controller:
                 block_list_flow = policy.policy_filter(self.parameters, self.core_list,'POLICY_OUT', 'service-policy')
                 if block_list_flow != []:
                     clean_policy.get_data_flow_queue(block_list_flow, self.parameters)
+    
+    """
+    def template_management(self):
+        template_management_obj = Management_template(self.parameters, self.path_script)
+        if self.device_type == 'S2300':
+            if not re.findall('# ENTERPRISE SERVICE #', "".join(read_script)):
+                self.add_script.write(template)
+                template_management_obj.switch_mgmt()"""
 
     def template_enterprise(self):
 
@@ -170,7 +181,7 @@ class Controller:
             search_vpn = [x for x in read_script if re.findall(f'ip vpn-instance {vpn}', x) and x == f'ip vpn-instance {vpn}']
             if search_vpn == []:
                 template_service_obj.vpn_service(vpn_template)
-
+    
         template_service_obj.prefix_service()
 
         if self.parameters['BGP']['ATTRIBUTES']['route-policy_in'][0] == True:
@@ -197,11 +208,14 @@ class Controller:
 
         template_display_obj = Show_template(self.parameters, self.path_show, self.patterns)
         template_display_obj.show_command()
+    
+    def reset_parameters(self):
+        self.parameters = reset_establish_parameters(self.parameters)
+
 
     
-        
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
-core_int = "12/14.555100"
+core_int = "9/3.83210"
 
 path_v2 = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Octubre/Bahia Blanca/Old device/CORE-BHB9.gics.ar.telefonica.com-2022-09-30_02_14_52.txt"
 core_int_v2 = "0/4/1/16.140110"
@@ -216,28 +230,27 @@ work_space = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre
 
 h4_name = 'H4-SJ-SJN01'
 
-def call_funtion(path, core_int, work_space, h4_name):
-    manager = Controller(path, core_int, work_space, h4_name)
+def automate_all(path, core_int, work_space, h4_name, type_device):
+    manager = Controller(path, core_int, work_space, h4_name, type_device)
     manager.interface_parameters()
+    manager.vpn_parameters()
+    manager.peers_parameters()
+    manager.routes_parameters()
+    manager.bgp_parameters()
+    manager.rip_parameters()
+    manager.map_parameters()
+    manager.prefix_parameters()
+    manager.policy_parameters()
+    #manager.template_management()
+    manager.template_enterprise()
+    manager.template_display()
+    manager.template_show()
+    manager.reset_parameters()
 
-call_funtion(path, core_int, work_space, h4_name)
-call_funtion(path_v2, core_int_v2, work_space, h4_name)
-call_funtion(path_v3, core_int_v3, work_space, h4_name)
-call_funtion(path_v4, core_int_v4, work_space, h4_name)
-
-#manager = Controller(path, core_int, work_space, h4_name)
-#manager.interface_parameters()
-#manager.vpn_parameters()
-#manager.peers_parameters()
-#manager.routes_parameters()
-#manager.bgp_parameters()
-#manager.rip_parameters()
-#manager.map_parameters()
-#manager.prefix_parameters()
-#manager.policy_parameters()
-#manager.template_enterprise()
-#manager.template_display()
-#manager.template_show()
+for x in range(len(excel_list)):
+    core_interface = excel_list[x][3]
+    type_device = "S2300"
+    automate_all(path, core_interface, work_space, h4_name, type_device)
 
 
 

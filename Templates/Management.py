@@ -1,14 +1,21 @@
 
 class Management_template:
 
-    def __init__(self, parameters):
+    def __init__(self, parameters, path_script):
 
-        self.new_interface = parameters
-        self.description = parameters
-        self.loopback = parameters
-        self.id = parameters
-        self.adred = parameters
-        self.description_service = parameters
+        self.new_interface = parameters['NEW_INTERFACE']
+        self.description = parameters['MANAGEMENT_DATA']['device_name']
+        self.loopback = parameters['MANAGEMENT_DATA']['mgmt_ip']
+        self.id = parameters['MANAGEMENT_DATA']['ID']
+        self.adred = parameters['MANAGEMENT_DATA']['ADRED']
+        self.path_script = path_script
+        self.add_script = open(self.path_script, "a")
+        self.headers = headers_template = """######################################
+                                             ######### ENTERPRISE SERVICE #########
+                                             ######################################
+                                             #
+                                             #"""
+        #self.description_service = parameters
 
     def switch_mgmt(self):
 
@@ -37,6 +44,7 @@ class Management_template:
         f'#####\n',
         f'#\n'
         ]
+        self.add_script.write("".join(switch.copy()))
 
     def tmarc_electric_mgmt(self):
         

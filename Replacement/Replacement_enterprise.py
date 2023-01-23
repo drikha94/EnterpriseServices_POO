@@ -23,20 +23,22 @@ class Service_template:
 
     def policy_service(self, policy_template):
 
+        template = policy_template.copy()
+
         if self.parameters['INTER']['POLICY_IN'] != "":
                                                     
             for x in range(len(self.parameters['POLICY_IN'])):
-                policy_template[6] = policy_template[6].replace('number_one', self.parameters['POLICY_IN'][x]) if x == 0 else policy_template[6]
-                policy_template[6] = policy_template[6].replace('number_two', self.parameters['POLICY_IN'][x]) if x == 1 else policy_template[6]
-                policy_template[6] = policy_template[6].replace('number_tree', self.parameters['POLICY_IN'][x]) if x == 2 else policy_template[6]
+                template[6] = template[6].replace('number_one', self.parameters['POLICY_IN'][x]) if x == 0 else template[6]
+                template[6] = template[6].replace('number_two', self.parameters['POLICY_IN'][x]) if x == 1 else template[6]
+                template[6] = template[6].replace('number_tree', self.parameters['POLICY_IN'][x]) if x == 2 else template[6]
 
-            policy_template[6] = policy_template[6].replace('car cir number_one', "")
-            policy_template[6] = policy_template[6].replace('cbs number_two', "")
-            policy_template[6] = policy_template[6].replace('pbs number_tree green pass red discard', "")
+            template[6] = template[6].replace('car cir number_one', "")
+            template[6] = template[6].replace('cbs number_two', "")
+            template[6] = template[6].replace('pbs number_tree green pass red discard', "")
 
-            policy_template = [x.replace('ENLACE_XX', self.parameters['INTER']['POLICY_IN']) for x in policy_template]
+            template = [x.replace('ENLACE_XX', self.parameters['INTER']['POLICY_IN']) for x in template]
             
-            self.add_script.write("".join(policy_template))
+            self.add_script.write("".join(template))
     
     def prefix_service(self):
 
@@ -101,58 +103,64 @@ class Service_template:
             
     def vpn_service(self, vpn_template):
 
+        template = vpn_template.copy()
+
         if self.parameters['INTER']['VPN'] != "":
         
-            vpn_template[0] = vpn_template[0].replace('VPN_NAME', self.vpn)
-            vpn_template[1] = vpn_template[1].replace('VPN_DESCRIPTION', self.parameters['VPN']['DESCRIP'])
-            vpn_template[3] = vpn_template[3].replace('ROUTE_DISTINGUISHER', self.parameters['VPN']['RD'])
+            template[0] = template[0].replace('VPN_NAME', self.vpn)
+            template[1] = template[1].replace('VPN_DESCRIPTION', self.parameters['VPN']['DESCRIP'])
+            template[3] = template[3].replace('ROUTE_DISTINGUISHER', self.parameters['VPN']['RD'])
 
             def target(vpn_target, to_replace, to_insert, num):
                 for x in range(len(vpn_target)):
-                    vpn_template[num] = vpn_template[num].replace(to_replace, vpn_target[x])
+                    template[num] = template[num].replace(to_replace, vpn_target[x])
                     if x < len(vpn_target):
-                        vpn_template.insert(num+1, to_insert)
+                        template.insert(num+1, to_insert)
                         num += 1
 
             target(self.parameters['VPN']['RTE'], 'RTE_NUMBER', '  vpn-target RTE_NUMBER export-extcommunity\n', 4)
-            num = vpn_template.index('  vpn-target RTI_NUMBER import-extcommunity\n')
+            num = template.index('  vpn-target RTI_NUMBER import-extcommunity\n')
             target(self.parameters['VPN']['RTI'], 'RTI_NUMBER', '  vpn-target RTI_NUMBER import-extcommunity\n', num)
-            vpn_template.remove('  vpn-target RTE_NUMBER export-extcommunity\n')
-            vpn_template.remove('  vpn-target RTI_NUMBER import-extcommunity\n')
+            template.remove('  vpn-target RTE_NUMBER export-extcommunity\n')
+            template.remove('  vpn-target RTI_NUMBER import-extcommunity\n')
             if self.vpn == 'CSC_GPBA':
-                vpn_template.remove('  apply-label per-instance\n')
+                template.remove('  apply-label per-instance\n')
 
-            self.add_script.write("".join(vpn_template))
+            self.add_script.write("".join(template))
 
     def rip_service(self, rip_template):
+
+        template = rip_template.copy()
 
         if self.parameters['RIP']['STATUS'] == True:
          
             def peer(peer_type, to_replace, to_insert, num):
 
                 for x in range(len(peer_type)):
-                    rip_template[num] = rip_template[num].replace(to_replace, peer_type[x])
+                    template[num] = template[num].replace(to_replace, peer_type[x])
                     if x < len(peer_type):
-                        rip_template.insert(num+1, to_insert)
+                        template.insert(num+1, to_insert)
                         num += 1
 
             if self.parameters['RIP']['network'] != []:
                 peer(self.parameters['RIP']['network'], 'PEER_IP', ' network PEER_IP\n', 2)
             if self.parameters['RIP']['neighbor'] != []:
-                peer(self.parameters['RIP']['neighbor'], 'PEER_IP', ' peer PEER_IP\n', rip_template.index(' peer PEER_IP\n'))
+                peer(self.parameters['RIP']['neighbor'], 'PEER_IP', ' peer PEER_IP\n', template.index(' peer PEER_IP\n'))
 
             ref = self.parameters['INTER']['REF']
-            rip_template[0] = rip_template[0].replace('RIP_NUMBER', ref) if ref != "" else rip_template[0].replace('RIP_NUMBER', 'XXXXX')
-            rip_template[0] = rip_template[0].replace('VPN_NAME', self.vpn)
+            template[0] = template[0].replace('RIP_NUMBER', ref) if ref != "" else template[0].replace('RIP_NUMBER', 'XXXXX')
+            template[0] = template[0].replace('VPN_NAME', self.vpn)
 
-            rip_template.remove(' network PEER_IP\n')
-            rip_template.remove(' peer PEER_IP\n')
-            rip_template = [x for x in rip_template if not re.findall('PEER_IP', x)]
+            template.remove(' network PEER_IP\n')
+            template.remove(' peer PEER_IP\n')
+            template = [x for x in template if not re.findall('PEER_IP', x)]
 
-            self.add_script.write("".join(rip_template))
+            self.add_script.write("".join(template))
                 
 
-    def bgp_service(self, template):
+    def bgp_service(self, bgp_template):
+
+        template = bgp_template.copy()
 
         if self.parameters['BGP']['STATUS'] == True:
 
@@ -185,7 +193,9 @@ class Service_template:
                 
             self.add_script.write("".join(template))
 
-    def flow_service(self, template):
+    def flow_service(self, flow_template):
+
+        template = flow_template.copy()
 
         if self.parameters['POLICY_OUT']['shape average'] != "" and self.parameters['POLICY_OUT']['service-policy'] != "":
         #if self.parameters['INTER']['POLICY_OUT'] != "" and self.parameters['INTER']['POLICY_OUT'] != self.parameters['INTER']['POLICY_IN']:
@@ -208,8 +218,9 @@ class Service_template:
 
             self.add_script.write("".join(template))
     
-    def interface_service(self, template, cabling_type):
+    def interface_service(self, inter_template, cabling_type):
 
+        template = inter_template.copy()
         inter = self.parameters['INTER']
 
         template[0] = template[0].replace('X/X/X', self.parameters['NEW_INTERFACE'])
@@ -277,11 +288,13 @@ class Service_template:
 
     def routes_service(self, routes_template):
 
+        template = routes_template.copy()
+
         if self.parameters['ROUTES'] != []:
 
             routes_service = []
             for x in range(len(self.parameters['ROUTES'])):
-                route = routes_template[0].replace('VPN_NAME', self.vpn)
+                route = template[0].replace('VPN_NAME', self.vpn)
                 route = route.replace('IPFINAL_MASK_IPPEER', self.parameters['ROUTES'][x])
                 if self.parameters['INTER']['REF'] != "":
                     route = route.replace('REF_NAME', self.parameters['INTER']['REF'])

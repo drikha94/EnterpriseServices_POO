@@ -25,22 +25,22 @@ parameters = {
         'STATUS': False,
         'PEER': '',
         'ATTRIBUTES': {
-            'import-route static': [False, 'N/A'],
+            'import-route static': [False, ''],
             'import-route rip': [False, ''],
             'maximum load': [False, ''],
             'as-number': [False, ''],
             'description': [False, ''],
-            'advertise-community': [False, 'N/A'],
+            'advertise-community': [False, ''],
             'keep-all-routes': [False, ''],
-            'substitute-as': [False, 'N/A'],
+            'substitute-as': [False, ''],
             'fake-as': [True, ''],
             'route-limit': [False, ''],
-            'default-route-advertise': [False, 'N/A'],
+            'default-route-advertise': [False, ''],
             'password cipher': [False, 'XXXX'],
             'ebgp-max-hop': [False, ''],
             'allow-as-loop': [False, ''],
             'route-update': [False, ''],
-            'reflect-client': [False, 'N/A'],
+            'reflect-client': [False, ''],
             'route-policy_in': [False, ''],
             'route-policy_out': [False, ''],
         }
@@ -64,7 +64,7 @@ parameters = {
         ' class VIDEO':[False, '']
     },
     'ROUTES': [],
-    'NEW_INTERFACE': '5/5/5',
+    'NEW_INTERFACE': '55',
     'OLD_INTERFACE': '',
     'ROUTE_MAP_IN':{
         'route_policy_quantity': 0,
@@ -93,5 +93,11 @@ parameters = {
     'DISPLAY_COMMAND':{
         'interface': 'GigabitEthernet',
         'vlan': ''
+    },
+    'MANAGEMENT_DATA':{
+        'mgmt_ip': '193.5.10.93',
+        'device_name': 'S2300-BA-MCH01',
+        'ID': '196854',
+        'ADRED': 'ADRED-2022-1'
     }
 }

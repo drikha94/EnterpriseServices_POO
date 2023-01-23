@@ -11,51 +11,43 @@ class Display_template:
 
     def display_command(self):
 
-        template = []
+        new_template = []
+        peer, routes, ref = self.parameters['BGP']['PEER'], self.parameters['ROUTES'], self.parameters['INTER']['REF']
+        description, ip = self.parameters['INTER']['DESCRIP'], self.parameters['INTER']['IP']
         command = self.parameters['DISPLAY_COMMAND']
 
-        def headers():
-            if self.parameters['INTER']['REF'] != "":
-                self.display_template[0] = self.display_template[0].replace('TO_REPLACE', self.parameters['INTER']['REF'])
-            else:
-                self.display_template[0] = self.display_template[0].replace('REF:TO_REPLACE', self.parameters['INTER']['DESCRIP'])
+        headers = f'############ REF:{ref}\n' if ref != "" else f'############ {description}\n'
+        new_template.append(headers)
+        new_template.append('#\n')
 
-        def check_power_arp():
-            self.display_template[2] = self.display_template[2] + command['interface'] + command['vlan'] + '\n'
-            inter = command['interface'].replace('GigabitEthernet', '').replace('Eth-Trunk', '')
-            self.display_template[3] = self.display_template[3] + inter + command['vlan'] + '\n'
+        check_power = 'display interface brief ' + command['interface'] + command['vlan'] + '\n'
+        new_template.append(check_power)
 
-        def add_ping():
-            if self.parameters['INTER']['IP'] != "":
-                self.display_template[4] = self.display_template[4].replace('IP_MAIN', self.parameters['INTER']['IP'])
+        inter = command['interface'].replace('GigabitEthernet', '').replace('Eth-Trunk', '')
+        check_arp = 'display arp all | inc ' +  inter + command['vlan'] + '\n'
+        new_template.append(check_arp)
 
-            if self.parameters['ROUTES'] != []:
-                for x in range(len(self.parameters['ROUTES'])):
-                    route = self.parameters['ROUTES'][x].split()
-                    self.display_template.insert(5+x, self.display_template[4])
-                    self.display_template[5+x] = self.display_template[5+x].replace('IP_REMOTE', route[0])
-
-            if self.parameters['BGP']['PEER'] != "":
-                self.display_template[4] = self.display_template[4].replace('IP_REMOTE', self.parameters['BGP']['PEER'])
-
-            if self.parameters['BGP']['PEER'] == "" and self.parameters['ROUTES'] != []:
-                peer = self.parameters['ROUTES'][0].split()
-                self.display_template[4] = self.display_template[4].replace('IP_REMOTE', peer[2])
+        if peer != "":
+            ping = f'ping -vpn-instace {self.vpn} -a {ip} {peer}\n'
+            adv_routes = f'display bgp vpnv4 vpn-instance {self.vpn} routing-table peer {peer} advertised-routes\n'
+            rcv_routes = f'display bgp vpnv4 vpn-instance {self.vpn} routing-table peer {peer} accepted-routes\n'
+            new_template.append(ping)
+            new_template.append(adv_routes)
+            new_template.append(rcv_routes)
         
-        
-        def routing_table():
+        if routes != []:
+            for x in range(len(routes)):
+                route = routes[x].split()
 
-            for x in self.display_template:
-                x = x.replace('VPN_NAME', self.vpn)
-                if self.parameters['BGP']['STATUS'] == True:
-                    if self.parameters['BGP']['PEER'] != "":
-                        x = x.replace('IP_REMOTE', self.parameters['BGP']['PEER'])
-                    template.append(x)
-                else:
-                    if not re.findall('routing-table', x):
-                        template.append(x)
+                command = f'ping -vpn-instace {self.vpn} -a {ip} {route[0]}\n'
+                command_peer = f'ping -vpn-instace {self.vpn} -a {ip} {route[2]}\n'
+
+                if command_peer not in new_template:
+                    new_template.append(command_peer)
+                new_template.append(command)
+        new_template.append('#\n')
+        new_template.append('#\n')
             
-            self.add_display.write("".join(template))
+        self.add_display.write("".join(new_template))
 
-        headers(), check_power_arp(), add_ping(), routing_table()
         
