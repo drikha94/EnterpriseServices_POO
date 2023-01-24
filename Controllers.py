@@ -2,7 +2,6 @@ from Check_Version import version
 from Open_File import open_txt, append_txt
 from Establish_Parameters import parameters
 from Reset_parameters import reset_establish_parameters
-from read_excel import excel_list
 import re
 
 #IMPORTACION DE LOS MODULOS QUE QUE CONTIENEN LOS TEMPLATE
@@ -38,7 +37,7 @@ from Clean_Blocks.Get_Prefix_Data import Get_prefix_data
 
 class Controller:
 
-    def __init__(self, path, core_interface, work_space, h4_name, device_type):
+    def __init__(self, path, core_interface, work_space, h4_name, device_type, int_service, cabling_type):
 
         self.path = path
         self.core_interface = core_interface
@@ -49,6 +48,8 @@ class Controller:
         self.path_show = f'{work_space}/CML_{self.core_name}_PRECHECK.txt'
         self.patterns = version.check_version(self.core_list)
         self.parameters = parameters
+        self.parameters['NEW_INTERFACE'] = int_service
+        self.parameters['CABLING_TYPE'] = cabling_type
         self.possible_peers = []
         self.device_type = device_type
 
@@ -151,16 +152,29 @@ class Controller:
                 block_list_flow = policy.policy_filter(self.parameters, self.core_list,'POLICY_OUT', 'service-policy')
                 if block_list_flow != []:
                     clean_policy.get_data_flow_queue(block_list_flow, self.parameters)
-    
-    """
-    def template_management(self):
-        template_management_obj = Management_template(self.parameters, self.path_script)
-        if self.device_type == 'S2300':
-            if not re.findall('# ENTERPRISE SERVICE #', "".join(read_script)):
-                self.add_script.write(template)
-                template_management_obj.switch_mgmt()"""
+        
 
-    def template_enterprise(self):
+    def template_management(self, ip_mgmt, device_name, type_cabling, id_service, adred):
+        self.parameters['MANAGEMENT_DATA']['mgmt_ip'] = ip_mgmt if ip_mgmt != "" else 'X/X/X'
+        self.parameters['MANAGEMENT_DATA']['device_name'] = device_name if device_name != "" else 'DEVICE_NAME'
+        self.parameters['MANAGEMENT_DATA']['ID'] = id_service if id_service != "" else 'ID_NUMBER'
+        self.parameters['MANAGEMENT_DATA']['ADRED'] = adred if adred != "" else 'ADRED_NUMBER'
+        read_script = open_txt(self.path_script)
+        template_management_obj = Management_template(self.parameters, self.path_script, headers_template)
+        if not re.findall('# ENTERPRISE SERVICE #', "".join(open_txt(self.path_script))):
+            template_management_obj.add_headers()
+        if self.device_type == 'S2300':
+            template_management_obj.switch_mgmt()
+        if self.device_type == 'TMARC' and self.parameters['CABLING_TYPE'] == 'ELECTRIC':
+            template_management_obj.tmarc_electric_mgmt()
+        if self.device_type == 'TMARC' and self.parameters['CABLING_TYPE'] == 'FIBER':
+            template_management_obj.tmarc_fiber_mgmt()
+        if self.device_type == 'ATN':
+            template_management_obj.atn_mgmt()
+        if self.device_type == 'CORE':
+            template_management_obj.core_mgmt()
+
+    def template_enterprise(self, type):
 
         template_service_obj = Service_template(self.parameters, self.path_script)
         policy_in = self.parameters['INTER']['POLICY_IN']
@@ -195,7 +209,7 @@ class Controller:
         template_service_obj.rip_service(rip_template)
         template_service_obj.bgp_service(bgp_template)
         template_service_obj.flow_service(flow_template)
-        template_service_obj.interface_service(interface_template, 'fiber')
+        template_service_obj.interface_service(interface_template, type)
         template_service_obj.routes_service(routes_template)
         template_service_obj.close_txt()
 
@@ -230,27 +244,31 @@ work_space = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre
 
 h4_name = 'H4-SJ-SJN01'
 
-def automate_all(path, core_int, work_space, h4_name, type_device):
-    manager = Controller(path, core_int, work_space, h4_name, type_device)
-    manager.interface_parameters()
-    manager.vpn_parameters()
-    manager.peers_parameters()
-    manager.routes_parameters()
-    manager.bgp_parameters()
-    manager.rip_parameters()
-    manager.map_parameters()
-    manager.prefix_parameters()
-    manager.policy_parameters()
-    #manager.template_management()
-    manager.template_enterprise()
-    manager.template_display()
-    manager.template_show()
-    manager.reset_parameters()
 
-for x in range(len(excel_list)):
-    core_interface = excel_list[x][3]
-    type_device = "S2300"
-    automate_all(path, core_interface, work_space, h4_name, type_device)
+"""
+ip_mgmt='10.10.10.10'
+device_name = 'prueba'
+new_int= '8/8/8'
+id_service = '5555' 
+adred = '77777'
+device_type = 'S2300'
+
+manager = Controller(path, core_int, work_space, h4_name, device_type, new_int, self.parameters['CABLING_TYPE'])
+manager.interface_parameters()
+manager.vpn_parameters()
+manager.peers_parameters()
+manager.routes_parameters()
+manager.bgp_parameters()
+manager.rip_parameters()
+manager.map_parameters()
+manager.prefix_parameters()
+manager.policy_parameters()
+manager.template_management(ip_mgmt, device_name, type_cabling, id_service, adred)
+manager.template_enterprise(self.parameters['CABLING_TYPE'])
+manager.template_display()
+manager.template_show()
+manager.reset_parameters()"""
+
 
 
 

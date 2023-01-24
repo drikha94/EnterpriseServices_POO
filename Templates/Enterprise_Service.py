@@ -2,10 +2,9 @@ headers_template = """######################################
 ######### ENTERPRISE SERVICE #########
 ######################################
 #
-#
 """
 
-ref_id_template = """########### REF TO_REPLACE
+ref_id_template = """###### REF TO_REPLACE
 #
 #
 """

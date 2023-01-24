@@ -64,7 +64,7 @@ parameters = {
         ' class VIDEO':[False, '']
     },
     'ROUTES': [],
-    'NEW_INTERFACE': '55',
+    'NEW_INTERFACE': 'X/X/X',
     'OLD_INTERFACE': '',
     'ROUTE_MAP_IN':{
         'route_policy_quantity': 0,
@@ -95,9 +95,10 @@ parameters = {
         'vlan': ''
     },
     'MANAGEMENT_DATA':{
-        'mgmt_ip': '193.5.10.93',
-        'device_name': 'S2300-BA-MCH01',
-        'ID': '196854',
-        'ADRED': 'ADRED-2022-1'
-    }
+        'mgmt_ip': 'X.X.X.X',
+        'device_name': 'DEVICE_NAME',
+        'ID': 'ID_NUMBER',
+        'ADRED': 'ADRED_NUMBER'
+    },
+    'CABLING_TYPE':'FIBER'
 }

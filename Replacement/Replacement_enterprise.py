@@ -237,14 +237,14 @@ class Service_template:
             template[11] = template[11].replace('NAME_SERVICE', inter['POLICY_OUT'])
 
         if inter['VLAN_ONE'] != "" and inter['VLAN_TWO'] != "":
-            if cabling_type == 'fiber':
+            if cabling_type == 'FIBER':
                 template[0] = template[0].replace('VLANC', inter['VLAN_ONE'] + inter['VLAN_TWO'])
                 template[4] = template[4].replace('VLANUNO', inter['VLAN_ONE'])
                 template[4] = template[4].replace('VLANDOS', inter['VLAN_TWO'])
                 template.remove(' Vlan-type dot1q VLANUNO\n')
                 self.parameters['DISPLAY_COMMAND']['vlan'] = self.parameters['NEW_INTERFACE'] + '.' + inter['VLAN_ONE'] + inter['VLAN_TWO']
 
-            if cabling_type == 'electric':
+            if cabling_type == 'ELECTRIC':
                 template[0] = template[0].replace('VLANC', inter['VLAN_TWO'])
                 template[2] = template[2].replace('VLANUNO', inter['VLAN_TWO'])
                 template.remove(' encapsulation qinq-termination\n')
@@ -253,7 +253,7 @@ class Service_template:
                 self.parameters['DISPLAY_COMMAND']['vlan'] = self.parameters['NEW_INTERFACE'] + '.' + inter['VLAN_TWO']
 
         if inter['VLAN_ONE'] != "" and inter['VLAN_TWO'] == "": 
-            if cabling_type == 'fiber':
+            if cabling_type == 'FIBER':
                 template[0] = template[0].replace('VLANC', inter['VLAN_ONE'])
                 template[2] = template[2].replace('VLANUNO', inter['VLAN_ONE'])
                 template.remove(' encapsulation qinq-termination\n')
@@ -261,7 +261,7 @@ class Service_template:
                 template.remove(' arp broadcast enable\n')
                 self.parameters['DISPLAY_COMMAND']['vlan'] = self.parameters['NEW_INTERFACE'] + '.' + inter['VLAN_ONE']
 
-            if cabling_type == 'electric':
+            if cabling_type == 'ELECTRIC':
                 template[0] = template[0].replace('.VLANC', "")
                 template.remove(' Vlan-type dot1q VLANUNO\n')
                 template.remove(' encapsulation qinq-termination\n')
