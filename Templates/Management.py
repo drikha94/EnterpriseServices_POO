@@ -3,8 +3,9 @@ import re
 class Management_template:
 
     def __init__(self, parameters, path_script, headers_template):
-
-        self.interface_type = 'Eth-Trunk' if not re.findall('/', parameters['NEW_INTERFACE']) else 'GigabitEthernet'
+        
+        self.parameters = parameters
+        self.interface_type = parameters['DISPLAY_COMMAND']['interface']
         self.new_interface = parameters['NEW_INTERFACE']
         self.description = parameters['MANAGEMENT_DATA']['device_name']
         self.loopback = parameters['MANAGEMENT_DATA']['mgmt_ip']
@@ -115,4 +116,5 @@ class Management_template:
         f'#\n',
         f'#\n'
         ]
+
         self.add_script.write("".join(core.copy()))

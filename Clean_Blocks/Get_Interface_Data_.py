@@ -54,6 +54,20 @@ class Get_Interface_Data:
                 parameters['INTER']['VLAN_ONE'] = "".join(vlan[2]).strip()
                 parameters['INTER']['VLAN_TWO'] = "".join(vlan[4]).strip()
 
+            """ACA SE DEFINE LA VLAN EN FUNCION DEL TIPO DE CABLEADO, PARA SER USADO POSTERIORMENTE EN LOS TEMPLATE DE GESTION"""
+            if parameters['CABLING_TYPE'] == 'ELECTRIC':
+                if parameters['INTER']['VLAN_ONE'] != "" and parameters['INTER']['VLAN_TWO'] != "":
+                    parameters['DISPLAY_COMMAND']['vlan'] = parameters['INTER']['VLAN_TWO']
+                if parameters['INTER']['VLAN_ONE'] != "" and parameters['INTER']['VLAN_TWO'] == "":
+                    parameters['DISPLAY_COMMAND']['vlan'] = ""
+            if parameters['CABLING_TYPE'] == 'FIBER':
+                if parameters['INTER']['VLAN_ONE'] != "" and parameters['INTER']['VLAN_TWO'] != "":
+                    parameters['DISPLAY_COMMAND']['vlan'] = parameters['INTER']['VLAN_ONE'] + parameters['INTER']['VLAN_TWO']
+                if parameters['INTER']['VLAN_ONE'] != "" and parameters['INTER']['VLAN_TWO'] == "":
+                    parameters['DISPLAY_COMMAND']['vlan'] = parameters['INTER']['VLAN_ONE']
+            if not re.findall('/', parameters['NEW_INTERFACE']):
+                parameters['DISPLAY_COMMAND']['interface'] = 'Eth-Trunk'
+
         def get_policy():
 
             """BUSCA EL SERVICICE POLICY IN Y OUT Y LO ALMACENA EN EL DICCIONARIO"""

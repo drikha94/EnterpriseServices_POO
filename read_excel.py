@@ -36,6 +36,11 @@ class Read_workspace:
     def filter_df(self):
         get_df = self.search_excel_file()
         sheet_to_list = []
+        
+        filter_column = get_df[['TYPE', 'CABLING','DEVICE-NAME','H4-NAME','H4-INT', 'CORE-NAME', 'CORE-INT', 'ID', 'ADRED', 'L193']]
+        print(filter_column)
+
+        """
         try:
             filter_column = get_df[['TYPE', 'CABLING','DEVICE-NAME','H4-NAME','H4-INT', 'CORE-NAME', 'CORE-INT', 'ID', 'ADRED', 'L193']]
             sheet_to_list = filter_column.to_numpy().tolist()
@@ -49,11 +54,12 @@ class Read_workspace:
         except TypeError:
             pass
 
-        return sheet_to_list
+        return sheet_to_list"""
 
     def open_legacy_device(self):
 
         services_list = self.filter_df()
+        print(services_list)
         if services_list != []:
             for core_name in services_list:
                 core_configuration = f'{core_name[5].strip()}.gics.ar.telefonica.com'
@@ -61,7 +67,6 @@ class Read_workspace:
 
                 if core_file != []:
                     path_core = f'{self.workspace}/{core_file[0]}'
-                    print(path_core)
                     call_controller(
                                 path_core, 
                                 core_name[6].strip(), 
@@ -119,9 +124,9 @@ def call_controller(path, core_int, work_space, h4_name, type_device, ip_mgmt, d
 
 
 
-path_workspace = 'C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan'
+path_workspace = 'C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/Viedma 2'
 workspace = Read_workspace(path_workspace)
 #print(workspace.search_excel_file())
-#print(workspace.filter_df())
-workspace.open_legacy_device()
+print(workspace.filter_df())
+#workspace.open_legacy_device()
 
