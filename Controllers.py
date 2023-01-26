@@ -156,7 +156,7 @@ class Controller:
         
 
     def template_management(self, ip_mgmt, device_name, type_cabling, id_service, adred):
-        self.parameters['MANAGEMENT_DATA']['mgmt_ip'] = ip_mgmt if ip_mgmt != "" else 'X/X/X'
+        self.parameters['MANAGEMENT_DATA']['mgmt_ip'] = ip_mgmt if ip_mgmt != "" else 'X.X.X.X'
         self.parameters['MANAGEMENT_DATA']['device_name'] = device_name if device_name != "" else 'DEVICE_NAME'
         self.parameters['MANAGEMENT_DATA']['ID'] = id_service if id_service != "" else 'ID_NUMBER'
         self.parameters['MANAGEMENT_DATA']['ADRED'] = adred if adred != "" else 'ADRED_NUMBER'
@@ -164,26 +164,17 @@ class Controller:
         self.read_script = open_txt(self.path_script)
         if not re.findall('# ENTERPRISE SERVICE #', "".join(self.read_script)):
             template_management_obj.add_headers()
-
-        validation_name= re.findall('Conexion con '+self.parameters['MANAGEMENT_DATA']['device_name'],"".join(self.read_script))
-        validation_name = validation_name[0] if validation_name != [] else ""
-        name = 'Conexion con ' + self.parameters['MANAGEMENT_DATA']['device_name'].strip()
-
-        interface = 'interface ' + parameters['DISPLAY_COMMAND']['interface'] + parameters['NEW_INTERFACE'].strip()
-        validation_interface = re.findall(interface, "".join(self.read_script))
-        validation_interface = validation_interface[0] if validation_interface != [] else ""
         
-        if not name == validation_name:
-            if self.device_type == 'S2300':
-                template_management_obj.switch_mgmt()
-            if self.device_type == 'TMARC' and self.parameters['CABLING_TYPE'] == 'ELECTRIC' and interface != validation_interface.strip():
-                template_management_obj.tmarc_electric_mgmt()
-            if self.device_type == 'TMARC' and self.parameters['CABLING_TYPE'] == 'FIBER':
-                template_management_obj.tmarc_fiber_mgmt()
-            if self.device_type == 'ATN':
-                template_management_obj.atn_mgmt()
-            if self.device_type == 'CORE' and interface != validation_interface.strip():
-                template_management_obj.core_mgmt()
+        if self.device_type == 'S2300':
+            template_management_obj.switch_mgmt()
+        if self.device_type == 'TMARC (UTP)' and self.parameters['CABLING_TYPE'] == 'ELECTRIC':
+            template_management_obj.tmarc_electric_mgmt()
+        if self.device_type == 'TMARC (FO)' and self.parameters['CABLING_TYPE'] == 'FIBER':
+            template_management_obj.tmarc_fiber_mgmt()
+        if self.device_type == 'ATN':
+            template_management_obj.atn_mgmt()
+        if self.device_type == 'CORE':
+            template_management_obj.core_mgmt()
 
     def template_enterprise(self, cabling_type):
         

@@ -60,7 +60,8 @@ class Management_template:
         f'#\n',
         f'#\n'
         ]
-        self.add_script.write("".join(tmarc_electric.copy()))
+        if self.parameters['DISPLAY_COMMAND']['vlan'] != "":
+            self.add_script.write("".join(tmarc_electric.copy()))
 
     def tmarc_fiber_mgmt(self):
 
@@ -116,5 +117,5 @@ class Management_template:
         f'#\n',
         f'#\n'
         ]
-
-        self.add_script.write("".join(core.copy()))
+        if self.parameters['DISPLAY_COMMAND']['vlan'] != "":
+            self.add_script.write("".join(core.copy()))
