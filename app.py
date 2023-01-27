@@ -6,6 +6,7 @@ import tkinter.font as tkFont
 import os
 import re
 from Controllers import Controller
+from Tools.Get_duplicate_ip import Duplicate_ip
 
 class Main_aplicacion:
 
@@ -23,6 +24,8 @@ class Main_aplicacion:
         self.listbox()
         self.core_path = ""
         self.work_space = ""
+        self.path_h4 = ""
+        self.path_script = ""
         self.tools_windows()
 
         
@@ -76,7 +79,7 @@ class Main_aplicacion:
                         yscrollcommand=self.scrollbar.set)
         self.listbox.grid(column=1, row=2, rowspan=3, padx=20, pady=5)
         self.scrollbar.config(command=self.listbox.yview)
-        self.scrollbar.place(relx=0.91, rely=0.23, width=13, height=99)
+        self.scrollbar.place(relx=0.92, rely=0.24, width=13, height=98)
 
     def insert_enterprise_list(self):
         
@@ -264,10 +267,17 @@ class Main_aplicacion:
         Label(self.myframe_two, text='DIFERENTS TOOLS', background="#252525", fg= "#B9B4C3").grid(column=0, row= 0, pady=5)
         Label(self.lb_fm_tw, text='CHOOSE A TOOL', background="#252525", fg= "#B9B4C3").grid(column=0, row= 0, pady=5)
         ttk.Button(self.lb_fm_tw, width=38, text='Continue', command=self.top_level_tools).grid(column=0, row=2, columnspan=2, padx=10, pady=10)
+    
+    def get_h4_path(self):
+        self.path_h4 = ""
+        self.path_h4 = filedialog.askopenfilename(initialdir="/", title="Select file",filetypes=(("txt files","*.txt"), ("all files", "*.*")))
+
+    def get_script_path(self):
+        self.path_script = ""
+        self.path_script = filedialog.askopenfilename(initialdir="/", title="Select file",filetypes=(("txt files","*.txt"), ("all files", "*.*")))
 
     def top_level_tools(self):
         self.get_tool = self.combo.get()
-        print(self.get_tool)
         self.top2 = Toplevel(bg = "black", padx=10, pady=10)
         self.top2.grab_set()
         self.top2.focus_set()
@@ -275,11 +285,25 @@ class Main_aplicacion:
         self.fm_one_top2 = Frame(self.top2, bg = "#252525", pady=5, padx=5)
         self.fm_one_top2.grid(row=0,column=0, sticky=W)
         Label(self.fm_one_top2, text='GET DUPLICATE IP', background="#252525", fg= "#B9B4C3").grid(column=0, row= 0, columnspan=2, pady=15)
-        Label(self.fm_one_top2, text='script configuration',background="#252525", fg= "#B9B4C3").grid(column=0, row= 1, pady=5)
-        Label(self.fm_one_top2, text= 'H4 configuration', background="#252525", fg= "#B9B4C3").grid(column=0, row= 2, pady=5)
-        ttk.Button(self.fm_one_top2, width=5, style = "TButton", image=self.txt_image).grid(row=1, column=1, padx=(10,10), pady=(0,5))
-        ttk.Button(self.fm_one_top2, width=5, style = "TButton", image=self.txt_image).grid(row=2, column=1, padx=(10,10), pady=(0,5))
-        ttk.Button(self.fm_one_top2, width=26, style = "TButton").grid(row=4, column=0, columnspan=2,padx=10, pady=10)
+        ttk.Button(self.fm_one_top2, width=13, style = "TButton", text='H4 Config.', command=self.get_h4_path).grid(row=1, column=0, padx=5, pady=(0,5))
+        ttk.Button(self.fm_one_top2, width=13, style = "TButton", text='Script Config.', command=self.get_script_path).grid(row=1, column=1, padx=5, pady=(0,5))
+        ttk.Button(self.fm_one_top2, width=30, style = "TButton", text='Continue', command=self.get_duplicate_ip).grid(row=5, column=0, columnspan=2,padx=5, pady=5)
+        self.listbox2 = Listbox(self.fm_one_top2, borderwidth=0,  highlightcolor="#597EE3",highlightbackground="#597EE3",bg = "#5E5B5B", 
+                        fg='#C8C8C8', 
+                        selectbackground="#597EE3",
+                        height=5,
+                        width=31,)
+        self.listbox2.grid(column=0, row=4, columnspan=2, padx=5, pady=5)
+    
+    def get_duplicate_ip(self):
+        if self.path_script != "" and self.path_h4 != "":
+            check_ip = Duplicate_ip(self.path_h4, self.path_script)
+            check_ip.get_data()
+            check_ip.get_ip_and_vpn()
+            check_ip.compare()
+            check_ip.generate_message()
+        else:
+            messagebox.showinfo('Warning', 'Please add the script and H4 path')
 
     def styles(self):
 

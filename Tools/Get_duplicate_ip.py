@@ -1,5 +1,6 @@
 import re
 import os
+from tkinter import messagebox
 
 def open_txt(path):
 
@@ -59,7 +60,7 @@ class Duplicate_ip:
     
     def compare(self):
 
-        duplicate_ip = []
+        self.duplicate_ip = []
         for x in range(len(self.script_dict)):
             ip_conf, vpn_conf = self.script_dict[x][2], self.script_dict[x][1]
             for i in range(len(self.h4_dict)):
@@ -70,18 +71,31 @@ class Duplicate_ip:
                         list_combo.append(self.script_dict[x][0])
                         list_combo.append(self.script_dict[x][1])
                         list_combo.append(self.script_dict[x][2])
-                        duplicate_ip.append(list_combo)
+                        self.duplicate_ip.append(list_combo)
+    
+    def generate_message(self):
 
-        
-        print(duplicate_ip)
+        mess = []
+        for x in range(len(self.duplicate_ip)):
+            ip = self.duplicate_ip[x][2]
+            vpn = self.duplicate_ip[x][1]
+            message = f"""La IP: {self.duplicate_ip[x][2]}, VPN: {self.duplicate_ip[x][1]}\n"""
+            mess.append(message)
+
+        if mess != []:
+            messagebox.showwarning('Warning', mess)
+        else:
+            messagebox.showwarning('Warning', 'There are not duplicate IP')
 
 
 
 
+"""
 path_script = 'C:/Users/awx910701/Documents/Configuraciones/Script/2023/Enero/Rada Tilly/CFG_H4-CB-RTL01.txt'
 path_h4 = 'C:/Users/awx910701/Documents/Configuraciones/Script/2023/Enero/Rada Tilly/H4-CB-RTL01_.txt'
 check_ip = Duplicate_ip(path_h4, path_script)
 check_ip.get_data()
 check_ip.get_ip_and_vpn()
 check_ip.compare()
+check_ip.generate_message() """
 
