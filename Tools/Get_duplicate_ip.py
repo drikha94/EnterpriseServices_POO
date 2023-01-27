@@ -72,23 +72,20 @@ class Duplicate_ip:
                         list_combo.append(self.script_dict[x][1])
                         list_combo.append(self.script_dict[x][2])
                         self.duplicate_ip.append(list_combo)
+
+        #return self.duplicate_ip
     
     def generate_message(self):
 
         mess = []
         for x in range(len(self.duplicate_ip)):
-            ip = self.duplicate_ip[x][2]
-            vpn = self.duplicate_ip[x][1]
-            message = f"""La IP: {self.duplicate_ip[x][2]}, VPN: {self.duplicate_ip[x][1]}\n"""
+            message = f"""{x+1}- The IP: {self.duplicate_ip[x][2]}, VPN: {self.duplicate_ip[x][1]}\n"""
             mess.append(message)
 
         if mess != []:
-            messagebox.showwarning('Warning', mess)
+            messagebox.askquestion('Warning', f'Duplicate IPs:\n\n {"".join(mess)}\n Do you want to generate a mail?')
         else:
             messagebox.showwarning('Warning', 'There are not duplicate IP')
-
-
-
 
 """
 path_script = 'C:/Users/awx910701/Documents/Configuraciones/Script/2023/Enero/Rada Tilly/CFG_H4-CB-RTL01.txt'
@@ -97,5 +94,5 @@ check_ip = Duplicate_ip(path_h4, path_script)
 check_ip.get_data()
 check_ip.get_ip_and_vpn()
 check_ip.compare()
-check_ip.generate_message() """
-
+check_ip.generate_message()
+"""
