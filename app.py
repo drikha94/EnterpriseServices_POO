@@ -18,7 +18,7 @@ class Main_aplicacion:
         self.root.resizable(False,False)
         self.root.config(relief="ridge", background="black")
         self.frame_main()
-        self.images()
+        #self.images()
         self.button_main()
         self.tags()
         self.styles()
@@ -52,9 +52,9 @@ class Main_aplicacion:
         ttk.Button(self.myframe, text="Enterprise", width=17, style = "TButton", command=self.insert_enterprise_list).grid(row=2, column=0, padx=(10,5), pady=5)
         ttk.Button(self.myframe, text="Residential", width=17, style = "TButton", command=self.insert_residential_list).grid(row=3, column=0, padx=(10,5), pady=5)
         ttk.Button(self.myframe, text="Mobile", width=17, style = "TButton", command=self.insert_mobile_list).grid(row=4, column=0, padx=(10,5), pady=5)
-        ttk.Button(self.lb_fm, width=5, style = "TButton", image=self.txt_image, command=self.open_file).grid(row=0, column=2, padx=(10,10), pady=(0,5))
-        ttk.Button(self.lb_fm, width=5, style = "TButton", image=self.dir_image, command=self.open_dir).grid(row=1, column=2, padx=(10,10), pady=(0,5))
-        ttk.Button(self.lb_fm, text="Continue", width=28, style = "TButton", command=self.button_enterprises_services).grid(row=1, column=0, columnspan=2, padx=(15,5), pady=(0,0))
+        ttk.Button(self.lb_fm, width=5,style = "TButton", command=self.open_file, text='.txt').grid(row=0, column=2, padx=(10,10), pady=(10))
+        ttk.Button(self.lb_fm, width=5, style = "TButton", command=self.open_dir, text = 'Dir').grid(row=1, column=2, padx=(10,10), pady=(0,10))
+        ttk.Button(self.lb_fm, text="Continue", width=28, style = "TButton", command=self.button_enterprises_services).grid(row=1, column=0, columnspan=2, padx=(15,5), pady=(0,10))
         self.e_main_cero = Entry(self.lb_fm, width=15, justify=CENTER, highlightcolor="#597EE3", highlightbackground="#C8C8C8", highlightthickness=1, background='#252525', fg='#B9B4C3')
         self.e_main_cero.grid(row=0, column=1, padx=(10,5))
         Label(self.lb_fm, text='H4 NAME', background='#252525', foreground='#B9B4C3').grid(column=0, row=0, padx=10)
@@ -112,6 +112,7 @@ class Main_aplicacion:
         self.l_two = Label(self.myframe, text="SELECT DEVICE", background="#252525", fg= "#B9B4C3")
         self.l_two.grid(row=1, column=1, pady=5, padx=5)
     
+    """
     def images(self):
         
         absolute_folder_path = os.path.dirname(os.path.realpath(__file__))
@@ -120,7 +121,7 @@ class Main_aplicacion:
         self.txt_image = PhotoImage(file=absolute_image_path)
         self.dir_image = PhotoImage(file=absolute_image_path_two)
         self.txt_image = self.txt_image.subsample(20)
-        self.dir_image = self.dir_image.subsample(30)
+        self.dir_image = self.dir_image.subsample(30)"""
     
     def button_enterprises_services(self):
 
