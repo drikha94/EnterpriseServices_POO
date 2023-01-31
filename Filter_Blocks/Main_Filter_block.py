@@ -8,7 +8,6 @@ class Filter_main_blocks:
         block = []
         #print(first_line)
         if first_line != []: 
-            
             first_index = int(list.index(first_line[0]))
 
             for x in range(first_index, len(list)):

@@ -224,7 +224,6 @@ class Controller:
     def reset_parameters(self):
         self.parameters = reset_establish_parameters(self.parameters)
 
-
 """
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
 core_int = "9/3.341180"
@@ -237,6 +236,9 @@ core_int_v3 = "5/0/5.999"
 
 path_v4 = "C:/Users/awx910701/Documents/Configuraciones/Script/2021/FEBRUARY/Neuquen2/Old Device/CORE-NQN9.gics.ar.telefonica.com-2021-02-11_02_01_41.txt"
 core_int_v4 = '0/4/1/0.3395115'
+
+path_v5 = "C:/Users/awx910701/Documents/Configuraciones/Script/2023/Febrero/Santa Rosa/Old Device/CORE-CHV8.gics.ar.telefonica.com-2023-01-27_02_36_17.txt"
+core_int_v5 = '7/18.3346101'
 
 work_space = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan"
 
@@ -251,7 +253,7 @@ adred = '77777'
 device_type = 'CORE'
 cabling_type = 'FIBER'
 
-manager = Controller(path, core_int, work_space, h4_name, device_type, new_int, cabling_type)
+manager = Controller(path_v5, core_int_v5, work_space, h4_name, device_type, new_int, cabling_type)
 manager.interface_parameters()
 manager.vpn_parameters()
 manager.peers_parameters()

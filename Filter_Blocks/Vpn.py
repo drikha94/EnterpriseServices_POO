@@ -12,9 +12,10 @@ class Vpn_filter_block:
         data_type = 'vpn'
         vpn = parameters['INTER']['VPN']
 
-        first_line = list(filter(lambda linea: patterns['vpn']['p_vpn'][0] + vpn in linea, core_list))
+        first_line = list(filter(lambda linea: 'ip vrf ' + vpn in linea, core_list))
+        first_line = [x for x in first_line if x == 'ip vrf ' + vpn]
         if first_line == []:
-            first_line = list(filter(lambda linea: patterns['vpn']['p_vpn'][1] + vpn in linea, core_list))
+            first_line = list(filter(lambda linea: 'vrf definition ' + vpn in linea, core_list))
         
         first_line_filtered = []
         for x in first_line:

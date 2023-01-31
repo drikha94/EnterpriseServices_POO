@@ -44,7 +44,8 @@ class Duplicate_ip:
 
                 for i in range(indice, len(cfg)):
                     if re.findall('ip binding vpn-instance', cfg[i]):
-                        dict[x][1] = cfg[i].replace('ip binding vpn-instance', "").strip()
+                        if cfg[i].replace('ip binding vpn-instance', "").strip() != 'VOIP-IAD':
+                            dict[x][1] = cfg[i].replace('ip binding vpn-instance', "").strip()
 
                     if re.findall(r'ip address ', cfg[i]):
                         dict[x][2] = re.findall(r'ip address ', cfg[i])
@@ -66,7 +67,7 @@ class Duplicate_ip:
             for i in range(len(self.h4_dict)):
                 ip_h4, vpn_h4 = self.h4_dict[i][2], self.h4_dict[i][1]
                 if ip_conf == ip_h4 and vpn_conf == vpn_h4:
-                    if self.script_dict[x][2] != "":
+                    if self.script_dict[x][2] != "" and self.script_dict[x][2] != 'unnumbered':
                         list_combo = []
                         list_combo.append(self.script_dict[x][0])
                         list_combo.append(self.script_dict[x][1])
@@ -88,11 +89,12 @@ class Duplicate_ip:
             messagebox.showwarning('Warning', 'There are not duplicate IP')
 
 """
-path_script = 'C:/Users/awx910701/Documents/Configuraciones/Script/2023/Enero/Rada Tilly/CFG_H4-CB-RTL01.txt'
-path_h4 = 'C:/Users/awx910701/Documents/Configuraciones/Script/2023/Enero/Rada Tilly/H4-CB-RTL01_.txt'
+path_script = 'C:/Users/awx910701/Documents/Configuraciones/Script/2023/Febrero/Santa Rosa/CFG_H4-PA-SRS01_SCRIPT.txt'
+path_h4 = 'C:/Users/awx910701/Documents/Configuraciones/Script/2023/Febrero/Santa Rosa/New Device/H4-PA-SRS01.txt'
 check_ip = Duplicate_ip(path_h4, path_script)
 check_ip.get_data()
 check_ip.get_ip_and_vpn()
 check_ip.compare()
-check_ip.generate_message()
+#check_ip.generate_message()
 """
+
