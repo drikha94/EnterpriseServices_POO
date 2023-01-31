@@ -7,6 +7,7 @@ import os
 import re
 from Controllers import Controller
 from Tools.Get_duplicate_ip import Duplicate_ip
+from Tools.Get_Mac_CML import Mac_address_cml
 
 class Main_aplicacion:
 
@@ -26,6 +27,8 @@ class Main_aplicacion:
         self.work_space = ""
         self.path_h4 = ""
         self.path_script = ""
+        self.path_core_mac = ""
+        self.path_script_mac = ""
         self.tools_frame()
 
         
@@ -41,6 +44,8 @@ class Main_aplicacion:
         self.lb_fm.grid(row=5, column=0, columnspan=2, padx=5, pady=5)
         self.lb_fm_tw = LabelFrame(self.myframe_two, text='Get duplicate IP', bg='#252525', fg='#597EE3')
         self.lb_fm_tw.grid(row=1, column=0, padx=5, pady=5)
+        self.lb_fm_tree = LabelFrame(self.myframe_two, text='Get Mac-Address CML', bg='#252525', fg='#597EE3')
+        self.lb_fm_tree.grid(row=2, column=0, padx=10, pady=10)
 
     def button_main(self):
 
@@ -251,6 +256,7 @@ class Main_aplicacion:
             manager_ctls.template_enterprise(cabling_type)
             manager_ctls.template_display()
             manager_ctls.template_show()
+            manager_ctls.alarm()
             manager_ctls.reset_parameters()
 
             messagebox.showinfo("successful", "The configuration was created successfully")
@@ -263,24 +269,29 @@ class Main_aplicacion:
     def tools_frame(self):
 
         Label(self.myframe_two, text='TOOLS', background="#252525", fg= "#B9B4C3").grid(column=0, row= 0, columnspan=2, pady=5)
-        ttk.Button(self.lb_fm_tw, width=15, style = "TButton", text='H4 Config.', command=self.get_h4_path).grid(row=1, column=0, padx=10, pady=10)
-        ttk.Button(self.lb_fm_tw, width=15, style = "TButton", text='Script Config.', command=self.get_script_path).grid(row=1, column=1, padx=10, pady=10)
+        ttk.Button(self.lb_fm_tw, width=15, style = "TButton", text='H4 Config.', command=self.get_h4_path_dup).grid(row=1, column=0, padx=10, pady=10)
+        ttk.Button(self.lb_fm_tw, width=15, style = "TButton", text='Script Config.', command=self.get_script_path_dup).grid(row=1, column=1, padx=10, pady=10)
         ttk.Button(self.lb_fm_tw, width=35, style = "TButton", text='Continue', command=self.get_duplicate_ip).grid(row=5, column=0,padx=10, pady=10, columnspan=2)
-        """
-        self.listbox2 = Listbox(self.myframe_two, borderwidth=0,  highlightcolor="#597EE3",highlightbackground="#597EE3",bg = "#5E5B5B", 
-                        fg='#C8C8C8', 
-                        selectbackground="#597EE3",
-                        height=3,
-                        width=35,)
-        self.listbox2.grid(column=0, row=4, columnspan=2, padx=5, pady=5)"""
+        ttk.Button(self.lb_fm_tree, width=15, style = "TButton", text='CORE Config', command=self.get_core_path_mac).grid(row=1, column=0, padx=10, pady=10)
+        ttk.Button(self.lb_fm_tree, width=15, style = "TButton", text='Script file', command=self.get_script_path_mac).grid(row=1, column=1, padx=10, pady=10)
+        ttk.Button(self.lb_fm_tree, width=35, style = "TButton", text='Continue', command=self.get_mac_address_cml).grid(row=5, column=0,padx=10, pady=10, columnspan=2)
 
-    def get_h4_path(self):
+    def get_h4_path_dup(self):
         self.path_h4 = ""
         self.path_h4 = filedialog.askopenfilename(initialdir="/", title="Select file",filetypes=(("txt files","*.txt"), ("all files", "*.*")))
+    
+    def get_core_path_mac(self):
+        self.path_core_mac = ""
+        self.path_core_mac = filedialog.askopenfilename(initialdir="/", title="Select file",filetypes=(("txt files","*.txt"), ("all files", "*.*")))
 
-    def get_script_path(self):
+    def get_script_path_dup(self):
         self.path_script = ""
         self.path_script = filedialog.askopenfilename(initialdir="/", title="Select file",filetypes=(("txt files","*.txt"), ("all files", "*.*")))
+    
+    def get_script_path_mac(self):
+        self.path_script_mac = ""
+        self.path_script_mac = filedialog.askopenfilename(initialdir="/", title="Select file",filetypes=(("txt files","*.txt"), ("all files", "*.*")))
+    
     
     def get_duplicate_ip(self):
         if self.path_script != "" and self.path_h4 != "":
@@ -291,6 +302,14 @@ class Main_aplicacion:
             check_ip.generate_message()
         else:
             messagebox.showinfo('Warning', 'Please add the script and H4 path')
+    
+    def get_mac_address_cml(self):
+        if self.path_core_mac != "" and self.path_script_mac:
+            cml = Mac_address_cml(self.path_core_mac, self.path_script_mac)
+            cml.mac_address()
+            cml.add_to_script()
+        else:
+            messagebox.showinfo('Warning', 'Please add the script and CORE path')
 
     def styles(self):
 

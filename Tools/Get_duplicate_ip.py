@@ -84,9 +84,10 @@ class Duplicate_ip:
             mess.append(message)
 
         if mess != []:
-            messagebox.askquestion('Warning', f'Duplicate IPs:\n\n {"".join(mess)}\n Do you want to generate a mail?')
+            messagebox.showwarning('Warning', f'Duplicate IPs:\n\n {"".join(mess)}\n')
         else:
-            messagebox.showwarning('Warning', 'There are not duplicate IP')
+            messagebox.showinfo('Info', 'There are not duplicate IP')
+
 
 """
 path_script = 'C:/Users/awx910701/Documents/Configuraciones/Script/2023/Febrero/Santa Rosa/CFG_H4-PA-SRS01_SCRIPT.txt'
@@ -95,6 +96,7 @@ check_ip = Duplicate_ip(path_h4, path_script)
 check_ip.get_data()
 check_ip.get_ip_and_vpn()
 check_ip.compare()
-#check_ip.generate_message()
+check_ip.generate_message()
 """
+
 

@@ -2,6 +2,7 @@ from Check_Version import version
 from Open_File import open_txt, append_txt
 from Establish_Parameters import parameters
 from Reset_parameters import reset_establish_parameters
+from tkinter import messagebox
 import re
 
 #IMPORTACION DE LOS MODULOS QUE QUE CONTIENEN LOS TEMPLATE
@@ -221,8 +222,23 @@ class Controller:
         template_display_obj = Show_template(self.parameters, self.path_show, self.patterns)
         template_display_obj.show_command()
     
+    def alarm(self):
+        if self.parameters['INTER']['VPN'] == "BCOFRANCES":
+            messagebox.showwarning("Warning", "The VPN is BCOFRANCES, please check the additional peers")
+        if self.parameters['INTER']['IP_SEC'] != "":
+            messagebox.showwarning("Warning", "IP sub was detected, please check the configuration")
+        if self.parameters['INTER']['IPV6'] != "":
+            messagebox.showwarning("Warning", "The service have IPV6, please check")
+        if self.parameters['BGP']['ATTRIBUTES']['password cipher'][0] == True and self.parameters['INTER']['VPN'] != 'BCOPATAGONIA':
+            messagebox.showwarning("Warning", "The peer have a password, please ask the customer")
+    
     def reset_parameters(self):
         self.parameters = reset_establish_parameters(self.parameters)
+
+
+
+
+
 
 """
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
@@ -267,6 +283,7 @@ manager.template_management(ip_mgmt, device_name, cabling_type, id_service, adre
 manager.template_enterprise(cabling_type)
 manager.template_display()
 manager.template_show()
+manager.alarm()
 manager.reset_parameters()"""
 
 
