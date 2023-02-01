@@ -9,14 +9,36 @@ class Filter_residential:
         self.parameters = parameters
         self.main_filter = Filter_main_blocks()
         self.clean_data = Get_residential_data()
-
-    def filter_data(self, ce_cfg, ce_int):
+        self.gid_routes = []
+        self.iptv_unicast_routes = []
+        
+    def filter_data(self, ce_cfg, ce_int, version):
 
         data_type = 'residential'
+
+        """FILTER GID1 AND IPTV UNICAST STATIC ROUTE, DEPEND OF DE CE VERSION"""
+        if version == 1:
+            routes =  list(filter(lambda x: 'ip route ' in x, ce_cfg))
+            self.gid_routes = list(filter(lambda x: 'gid1' in x, routes))
+            self.iptv_unicast_routes = list(filter(lambda x: 'IPTV-UNICAST' in x, routes))
+        
+        if version == 2:
+            routes = self.main_filter.block(ce_cfg, ['router static'], data_type, '!', True, False)
+            
+            if list(filter(lambda x: ' vrf gid1' in x, routes)) != []:
+                self.gid_routes = self.main_filter.block(routes, [' vrf gid1'], data_type, ' !', True, False)
+            else:
+                self.gid_routes = []
+
+            if list(filter(lambda x: ' vrf IPTV-UNICAST' in x, routes)) != []:
+                self.iptv_unicast_routes = self.main_filter.block(routes, [' vrf IPTV-UNICAST'], data_type, ' !', True, False)
+            else:
+                self.iptv_unicast_routes = []
+
         inter = list(filter(lambda x: ce_int in x, ce_cfg))
-        #for x in range(len(inter)):
-            #if re.findall(r'[.]\d+', inter[x]):
-        block = self.main_filter.block(ce_cfg, [inter[4]], data_type, '!', True, False)
-        self.clean_data.get_data(self.parameters, block)
+        filter_inter = [x for x in inter if re.findall(f'^interface', x)]
+        for x in range(len(filter_inter)):
+            block = self.main_filter.block(ce_cfg, [filter_inter[x]], data_type, '!', True, False)
+            self.clean_data.get_data(self.parameters, block, ce_cfg, self.gid_routes, self.iptv_unicast_routes, version)
 
 
