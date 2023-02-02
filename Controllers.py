@@ -1,6 +1,6 @@
 from Check_Version import version
 from Open_File import open_txt, append_txt
-from Establish_Parameters import parameters
+from Establish_Parameters import parameters, residential_parameters
 from Reset_parameters import reset_establish_parameters
 from tkinter import messagebox
 import re
@@ -10,11 +10,13 @@ from Templates.Enterprise_Service import *
 from Templates.Display_command import *
 from Templates.Show_command import *
 from Templates.Management import Management_template
+from Templates.Residential_Services import Template_residential
 
 #IMPORTACION DE LOS MODULOS QUE REEMPLAZAN LOS DATOS EN LOS TEMPLATE
 from Replacement.Replacement_enterprise import Service_template
 from Replacement.Replacement_display import Display_template
 from Replacement.Replacement_show import Show_template
+from Replacement.Replacement_residential import Service_template_res
 
 #IMPORTACION DE LOS MODULOS QUE RETORNAN UN BLOQUE EN ESPECIFICO DEL CORE
 from Filter_Blocks.Interface import Interface_filter_block
@@ -24,6 +26,7 @@ from Filter_Blocks.Bgp import Bgp_filter_block
 from Filter_Blocks.Rip import Rip_filter_block
 from Filter_Blocks.Policy import Policy_filter_block
 from Filter_Blocks.Route_map import Map_filter_block
+from Filter_Blocks.Filter_residential_data import Filter_residential
 
 #IMPORTACION DE LOS MODULOS QUE RETORNAN LOS DATOS OBTENIDOS DE LOS BLOQUES
 from Clean_Blocks.Get_Interface_Data_ import Get_Interface_Data
@@ -48,12 +51,13 @@ class Controller:
         self.path_display = f'{work_space}/CML_{h4_name}_POSTCHECK.txt'
         self.path_show = f'{work_space}/CML_{self.core_name}_PRECHECK.txt'
         self.patterns = version.check_version(self.core_list)
+        self.residential_parameters = residential_parameters
+        self.residential_parameters['NEW_INTERFACE'] = int_service
         self.parameters = parameters
         self.parameters['NEW_INTERFACE'] = int_service
         self.parameters['CABLING_TYPE'] = cabling_type
         self.possible_peers = []
         self.device_type = device_type
-        #self.read_script = open_txt(self.path_script)
 
     def interface_parameters(self):
 
@@ -74,7 +78,7 @@ class Controller:
 
         peer = Get_peers_data()
         if self.parameters['INTER']['IP'] != "":
-            block_list = peer.get_data(self.parameters)
+            block_list = peer.get_data(self.parameters['INTER']['IP'], self.parameters['INTER']['MASK'])
             self.possible_peers = block_list
 
     def routes_parameters(self):
@@ -235,11 +239,121 @@ class Controller:
     def reset_parameters(self):
         self.parameters = reset_establish_parameters(self.parameters)
 
+    #################################################### RESIDENTIAL FUNTIONS
 
+    def get_residential_data(self):
 
+        peers_obj = Get_peers_data()
+        get_data_obj = Filter_residential(self.residential_parameters)
+        get_data_obj.filter_data(self.core_list, self.core_interface, self.patterns['id'], peers_obj)
+        #print(self.residential_parameters)
 
+    def template_residential(self):
 
+        template_residential_obj = Template_residential(self.residential_parameters, device_type)
+        replacement_obj = Service_template_res(self.residential_parameters, self.path_script)
+        self.read_script = open_txt(self.path_script)
 
+        if not re.findall('# RESIDENTIAL SERVICE #', "".join(self.read_script)):
+            replacement_obj.write_template(template_residential_obj.headers())
+
+        replacement_obj.write_template(template_residential_obj.headers_service())
+
+        replacement_obj.write_template(template_residential_obj.templates_main())
+        if device_type == 'GPON':
+            replacement_obj.write_template(template_residential_obj.templates_qos())
+
+        if self.residential_parameters['VLAN']['TRAFFIC INTERNET'] != []:
+            for x in range(len(self.residential_parameters['VLAN']['TRAFFIC INTERNET'])):
+                replacement_obj.write_template(template_residential_obj.template_speedy(
+                    self.residential_parameters['VLAN']['TRAFFIC INTERNET'][x][0],
+                    self.residential_parameters['VLAN']['TRAFFIC INTERNET'][x][1],
+                    x
+                ))
+        
+        if self.residential_parameters['VLAN']['TRAFFIC VOIP'] != []:
+            for x in range(len(self.residential_parameters['VLAN']['TRAFFIC VOIP'])):
+                replacement_obj.write_template(template_residential_obj.voip_template(
+                    self.residential_parameters['VLAN']['TRAFFIC VOIP'][x][0],
+                    self.residential_parameters['VLAN']['TRAFFIC VOIP'][x][1],
+                ))
+        
+        if self.residential_parameters['VLAN']['GESTION GID1'] != []:
+            for x in range(len(self.residential_parameters['VLAN']['GESTION GID1'])):
+                replacement_obj.write_template(template_residential_obj.gid_template(
+                    self.residential_parameters['VLAN']['GESTION GID1'][x][0],
+                    self.residential_parameters['VLAN']['GESTION GID1'][x][1],
+                    self.residential_parameters['VLAN']['GESTION GID1'][x][2]
+                ))
+
+        if self.residential_parameters['VLAN']['NGN TRAFFIC'] != []:
+            for x in range(len(self.residential_parameters['VLAN']['NGN TRAFFIC'])):
+                replacement_obj.write_template(template_residential_obj.ngn_traffic_template(
+                    self.residential_parameters['VLAN']['NGN TRAFFIC'][x][0],
+                    self.residential_parameters['VLAN']['NGN TRAFFIC'][x][1],
+                    self.residential_parameters['VLAN']['NGN TRAFFIC'][x][2],
+                ))
+        
+        if self.residential_parameters['VLAN']['NGN SENIALIZATION'] != []:
+            for x in range(len(self.residential_parameters['VLAN']['NGN SENIALIZATION'])):
+                replacement_obj.write_template(template_residential_obj.ngn_senialization_template(
+                    self.residential_parameters['VLAN']['NGN SENIALIZATION'][x][0],
+                    self.residential_parameters['VLAN']['NGN SENIALIZATION'][x][1],
+                    self.residential_parameters['VLAN']['NGN SENIALIZATION'][x][2],
+                ))
+        
+        if self.residential_parameters['VLAN']['IPTV MULTICAST'] != []:
+            for x in range(len(self.residential_parameters['VLAN']['IPTV MULTICAST'])):
+                replacement_obj.write_template(template_residential_obj.iptv_multi_template(
+                    self.residential_parameters['VLAN']['IPTV MULTICAST'][x][0],
+                    self.residential_parameters['VLAN']['IPTV MULTICAST'][x][1],
+                    self.residential_parameters['VLAN']['IPTV MULTICAST'][x][2],
+                ))
+        
+        if self.residential_parameters['VLAN']['IPTV UNICAST'] != []:
+            for x in range(len(self.residential_parameters['VLAN']['IPTV UNICAST'])):
+                replacement_obj.write_template(template_residential_obj.iptv_uni_template(
+                    self.residential_parameters['VLAN']['IPTV UNICAST'][x][0],
+                    self.residential_parameters['VLAN']['IPTV UNICAST'][x][1],
+                    self.residential_parameters['VLAN']['IPTV UNICAST'][x][2],
+                    self.residential_parameters['VLAN']['IPTV UNICAST'][x][3],
+                ))
+        
+        if self.residential_parameters['VLAN']['GESTION MODEMS'] != []:
+            for x in range(len(self.residential_parameters['VLAN']['GESTION MODEMS'])):
+                replacement_obj.write_template(template_residential_obj.modems_template(
+                    self.residential_parameters['VLAN']['GESTION MODEMS'][x][0],
+                    self.residential_parameters['VLAN']['GESTION MODEMS'][x][1],
+                ))
+        
+        if self.residential_parameters['VLAN']['TRAFFIC ENTERPRISE'] != []:
+            for x in range(len(self.residential_parameters['VLAN']['TRAFFIC ENTERPRISE'])):
+                replacement_obj.write_template(template_residential_obj.enterprise_template(
+                    self.residential_parameters['VLAN']['TRAFFIC ENTERPRISE'][x][0],
+                    self.residential_parameters['VLAN']['TRAFFIC ENTERPRISE'][x][1],
+                ))
+        
+
+#RESIDENTIAL TEST
+
+path = "C:/Users/awx910701/Documents/Configuraciones/Script/2023/Febrero/Santa Rosa/Old Device/CESRS01.txt"
+ce_int = "TenGigabitEthernet4/3"
+
+path_2 = 'C:/Users/awx910701/Documents/Configuraciones/Script/2021/MAYO/Sarandi/Old Device/CESRN02.txt'
+ce_int_2 = 'TenGigE0/2/1/0'
+
+work_space = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan"
+h4_name = 'H4-SJ-SJN01'
+
+device_type= 'DSLAM'
+new_int = '5/5/5'
+cabling_type = 'FIBER'
+
+manager = Controller(path, ce_int, work_space, h4_name, device_type, new_int, cabling_type)
+manager.get_residential_data()
+manager.template_residential()
+
+#ENTERPRISE TEST
 """
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
 core_int = "9/3.341180"
@@ -259,7 +373,6 @@ core_int_v5 = '7/18.3346101'
 work_space = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan"
 
 h4_name = 'H4-SJ-SJN01'
-
 
 ip_mgmt='10.10.10.10'
 device_name = 'prueba'
@@ -284,7 +397,8 @@ manager.template_enterprise(cabling_type)
 manager.template_display()
 manager.template_show()
 manager.alarm()
-manager.reset_parameters()"""
+manager.reset_parameters()
+"""
 
 
 

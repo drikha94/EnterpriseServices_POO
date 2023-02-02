@@ -1,9 +1,8 @@
 import re
-from Get_possible_peers_residential import Get_peers_data
 
 class Get_residential_data:
 
-    def get_data(self, parameters, block_list, ce_cfg, gid_routes, iptv_unicast_routes, version):
+    def get_data(self, parameters, block_list, ce_cfg, gid_routes, iptv_unicast_routes, version, peers_obj):
         
         package = []
         descrip = "".join(filter(lambda x: 'description ' in x, block_list)).lower()
@@ -52,25 +51,19 @@ class Get_residential_data:
 
                 """GET GID1 STATIC ROUTES"""
                 static_routes = list(filter(lambda x: vlan in x, gid_routes))
+                
                 for x in static_routes:
 
                     if version == 1:
                         route = re.findall(r'\d+[.]\d+[.]\d+[.]\d+', x)
-                        if len(route) == 3:
-                            huawei_route = f'ip route-static vpn-instance gid1 {route[0]} {route[1]} Eth-TrunkETH_NUMBER.TBD {route[2]}'
-                            routes_list.append(huawei_route)
-                        if len(route) == 2:
-                            huawei_route = f'ip route-static vpn-instance gid1 {route[0]} {route[1]} Eth-TrunkETH_NUMBER.TBD {route[0]}'
-                            routes_list.append(huawei_route)
+                        routes_list.append(route)
                     
                     if version == 2:
                         route = re.findall(r'\d+[.]\d+[.]\d+[.]\d+/\d+', x)
                         if route != []:
                             route = route[0].replace('/', ' ').split()
-                            huawei_route = f'ip route-static vpn-instance gid1 {route[0]} {route[1]} Eth-TrunkETH_NUMBER.TBD {route[0]}'
-                            routes_list.append(huawei_route)
-
-                    package.append(routes_list)
+                            routes_list.append(route)
+                package.append(routes_list)
                 parameters['VLAN']['GESTION GID1'].append(package)
                 
             """IDENTIFY NGN TRAFFIC VLAN"""
@@ -104,7 +97,7 @@ class Get_residential_data:
                 parameters['VLAN']['NGN SENIALIZATION'].append(package)
 
             if list(filter(lambda x: 'IPTV-UNICAST' in x, block_list)) != []:
-                peers_obj = Get_peers_data()
+                #peers_obj = Get_peers_data()
                 package.append(vlan)
                 package.append(dslam_name)
 
@@ -122,9 +115,7 @@ class Get_residential_data:
                             if route_ != []:
                                 for z in route_:
                                     route_filter = re.findall(r'\d+[.]\d+[.]\d+[.]\d+', z)
-                                    if len(route_filter) == 3:
-                                        huawei_routes = f'ip route-static vpn-instance IPTV-UNICAST {route_filter[0]} {route_filter[1]} {route_filter[2]}'
-                                        routes.append(huawei_routes)
+                                    routes.append(route_filter)
                     package.append(routes)
 
                 if version == 2:
@@ -141,8 +132,7 @@ class Get_residential_data:
                             if route_ != []:
                                 for z in route_:
                                     z = z.replace('/', ' ').split()
-                                    huawei_routes = f'ip route-static vpn-instance IPTV-UNICAST {z[0]} {z[1]} {z[2]}'
-                                    routes.append(huawei_routes)
+                                    routes.append(z)
                     package.append(routes)
 
                 parameters['VLAN']['IPTV UNICAST'].append(package)

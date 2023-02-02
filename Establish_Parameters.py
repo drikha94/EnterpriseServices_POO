@@ -102,3 +102,21 @@ parameters = {
     },
     'CABLING_TYPE':'FIBER'
 }
+
+residential_parameters = {
+    'NAME': '',
+    'VLAN': {
+        'TRAFFIC INTERNET': [],
+        'TRAFFIC VOIP': [],
+        'GESTION MODEMS': [],
+        'TRAFFIC ENTERPRISE': [],
+        'GESTION GID1': [],
+        'NGN TRAFFIC': [],
+        'NGN SENIALIZATION': [],
+        'IPTV MULTICAST': [],
+        'IPTV UNICAST': []
+    },
+    'NEW_INTERFACE': '',
+    'NEW_ETH': 'XX',
+    'ID': 'XXXXX'
+}

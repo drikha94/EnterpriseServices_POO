@@ -1,5 +1,5 @@
 from Filter_Blocks.Main_Filter_block import Filter_main_blocks
-from Get_Residential_Data import Get_residential_data
+from Clean_Blocks.Get_Residential_Data import Get_residential_data
 import re
 
 class Filter_residential:
@@ -12,7 +12,7 @@ class Filter_residential:
         self.gid_routes = []
         self.iptv_unicast_routes = []
         
-    def filter_data(self, ce_cfg, ce_int, version):
+    def filter_data(self, ce_cfg, ce_int, version, peers_obj):
 
         data_type = 'residential'
 
@@ -39,6 +39,6 @@ class Filter_residential:
         filter_inter = [x for x in inter if re.findall(f'^interface', x)]
         for x in range(len(filter_inter)):
             block = self.main_filter.block(ce_cfg, [filter_inter[x]], data_type, '!', True, False)
-            self.clean_data.get_data(self.parameters, block, ce_cfg, self.gid_routes, self.iptv_unicast_routes, version)
+            self.clean_data.get_data(self.parameters, block, ce_cfg, self.gid_routes, self.iptv_unicast_routes, version, peers_obj)
 
 

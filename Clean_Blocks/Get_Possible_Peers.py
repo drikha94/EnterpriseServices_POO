@@ -8,12 +8,12 @@ class Get_peers_data:
         self.possible_peers = []
         self.sum_peer = [1, -1, 5, -5]
 
-    def get_data(self, parameters):
+    def get_data(self, ip, mask):
 
-        ip_div = parameters['INTER']['IP'].split(".")
+        ip_div = ip.split(".")
         ip_div = [int(x) for x in ip_div]
 
-        if parameters['INTER']['MASK'] == "255.255.255.248":
+        if mask == "255.255.255.248":
             self.bucle = 4
 
         for peer in range(self.bucle):

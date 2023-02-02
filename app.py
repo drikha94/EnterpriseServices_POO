@@ -50,7 +50,7 @@ class Main_aplicacion:
     def button_main(self):
 
         ttk.Button(self.myframe, text="Enterprise", width=17, style = "TButton", command=self.insert_enterprise_list).grid(row=2, column=0, padx=(10,5), pady=5)
-        ttk.Button(self.myframe, text="Residential", width=17, style = "TButton", command=self.insert_residential_list, state='disabled').grid(row=3, column=0, padx=(10,5), pady=5)
+        ttk.Button(self.myframe, text="Residential", width=17, style = "TButton", command=self.insert_residential_list).grid(row=3, column=0, padx=(10,5), pady=5)
         ttk.Button(self.myframe, text="Mobile", width=17, style = "TButton", command=self.insert_mobile_list, state='disabled').grid(row=4, column=0, padx=(10,5), pady=5)
         ttk.Button(self.lb_fm, width=5,style = "TButton", image=self.txt_image, command=self.open_file).grid(row=0, column=2, padx=(10,10), pady=(0,5))
         ttk.Button(self.lb_fm, width=5, style = "TButton", image=self.dir_image, command=self.open_dir).grid(row=1, column=2, padx=(10,10), pady=(0,5))
@@ -121,9 +121,11 @@ class Main_aplicacion:
         self.dir_image = PhotoImage(file=absolute_image_path_two)
         self.txt_image = self.txt_image.subsample(20)
         self.dir_image = self.dir_image.subsample(30)
-    
+
     def button_enterprises_services(self):
 
+        residential_list = ['DSLAM', 'GPON']
+        enterprise_list = ['S2300','TMARC (FO)','TMARC (UTP)', 'ATN', 'CORE', 'NO MGMT']
         self.selection = self.listbox.curselection()
         if self.core_path == "" or self.work_space == "" or self.selection == () or self.e_main_cero.get() == "":
             messagebox.showinfo("Warning", "Type of device, directory, legacy configuration path and H4 name can't be empty")
@@ -137,68 +139,72 @@ class Main_aplicacion:
             self.fm_one_top = Frame(self.top, bg = "#252525", pady=5, padx=5)
             self.fm_one_top.grid(row=0,column=0, sticky=W)
 
-            if self.get_device == 'S2300':
-                Label(self.fm_one_top, text="Management data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=0, columnspan=3, pady=5)
-                Label(self.fm_one_top, text="Loopback193", background="#252525", fg= "#C8C8C8").grid(column=0, row=1, padx=5)
-                Label(self.fm_one_top, text="S2300 Name", background="#252525", fg= "#C8C8C8").grid(column=0, row=2, padx=5)
-                Label(self.fm_one_top, text="ID (Path)", background="#252525", fg= "#C8C8C8").grid(column=0, row=3, padx=5)
-                Label(self.fm_one_top, text="Adred", background="#252525", fg= "#C8C8C8").grid(column=0, row=4, padx=5)
-                self.e_top_one = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, bg='#252525', fg= "#C8C8C8")
-                self.e_top_one.grid(column=1, row=1, padx=5, pady=5)
-                self.e_top_two = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
-                self.e_top_two.grid(column=1, row=2, padx=5, pady=5)
-                self.e_top_tree = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
-                self.e_top_tree.grid(column=1, row=3, padx=5, pady=5)
-                self.e_top_four = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
-                self.e_top_four.grid(column=1, row=4, padx=5, pady=5)
+            if self.get_device in residential_list:
+                pass
 
-            if self.get_device == 'ATN':
-                Label(self.fm_one_top, text="Management data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=0, columnspan=3, pady=5)
-                Label(self.fm_one_top, text="H5 Name", background="#252525", fg= "#C8C8C8").grid(column=0, row=2, padx=5)
-                Label(self.fm_one_top, text="ID (Path)", background="#252525", fg= "#C8C8C8").grid(column=0, row=3, padx=5)
-                Label(self.fm_one_top, text="Adred", background="#252525", fg= "#C8C8C8").grid(column=0, row=4, padx=5)
-                self.e_top_two = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
-                self.e_top_two.grid(column=1, row=2, padx=5, pady=5)
-                self.e_top_tree = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
-                self.e_top_tree.grid(column=1, row=3, padx=5, pady=5)
-                self.e_top_four = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
-                self.e_top_four.grid(column=1, row=4, padx=5, pady=5)
+            if self.get_device in enterprise_list:
+                if self.get_device == 'S2300':
+                    Label(self.fm_one_top, text="Management data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=0, columnspan=3, pady=5)
+                    Label(self.fm_one_top, text="Loopback193", background="#252525", fg= "#C8C8C8").grid(column=0, row=1, padx=5)
+                    Label(self.fm_one_top, text="S2300 Name", background="#252525", fg= "#C8C8C8").grid(column=0, row=2, padx=5)
+                    Label(self.fm_one_top, text="ID (Path)", background="#252525", fg= "#C8C8C8").grid(column=0, row=3, padx=5)
+                    Label(self.fm_one_top, text="Adred", background="#252525", fg= "#C8C8C8").grid(column=0, row=4, padx=5)
+                    self.e_top_one = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, bg='#252525', fg= "#C8C8C8")
+                    self.e_top_one.grid(column=1, row=1, padx=5, pady=5)
+                    self.e_top_two = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
+                    self.e_top_two.grid(column=1, row=2, padx=5, pady=5)
+                    self.e_top_tree = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
+                    self.e_top_tree.grid(column=1, row=3, padx=5, pady=5)
+                    self.e_top_four = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
+                    self.e_top_four.grid(column=1, row=4, padx=5, pady=5)
+
+                if self.get_device == 'ATN':
+                    Label(self.fm_one_top, text="Management data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=0, columnspan=3, pady=5)
+                    Label(self.fm_one_top, text="H5 Name", background="#252525", fg= "#C8C8C8").grid(column=0, row=2, padx=5)
+                    Label(self.fm_one_top, text="ID (Path)", background="#252525", fg= "#C8C8C8").grid(column=0, row=3, padx=5)
+                    Label(self.fm_one_top, text="Adred", background="#252525", fg= "#C8C8C8").grid(column=0, row=4, padx=5)
+                    self.e_top_two = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
+                    self.e_top_two.grid(column=1, row=2, padx=5, pady=5)
+                    self.e_top_tree = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
+                    self.e_top_tree.grid(column=1, row=3, padx=5, pady=5)
+                    self.e_top_four = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
+                    self.e_top_four.grid(column=1, row=4, padx=5, pady=5)
             
-            if self.get_device == 'TMARC (FO)':
-                Label(self.fm_one_top, text="Management data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=0, columnspan=3, pady=10)
-                Label(self.fm_one_top, text="IP Mgmt", background="#252525", fg= "#C8C8C8").grid(column=0, row=1, padx=5)
-                Label(self.fm_one_top, text="Tmarc Name", background="#252525", fg= "#C8C8C8").grid(column=0, row=2, padx=5)
-                self.e_top_one = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, bg='#252525', fg= "#C8C8C8")
-                self.e_top_one.grid(column=1, row=1, padx=5, pady=5)
-                self.e_top_two = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525',fg= "#C8C8C8")
-                self.e_top_two.grid(column=1, row=2, padx=5, pady=5)
+                if self.get_device == 'TMARC (FO)':
+                    Label(self.fm_one_top, text="Management data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=0, columnspan=3, pady=10)
+                    Label(self.fm_one_top, text="IP Mgmt", background="#252525", fg= "#C8C8C8").grid(column=0, row=1, padx=5)
+                    Label(self.fm_one_top, text="Tmarc Name", background="#252525", fg= "#C8C8C8").grid(column=0, row=2, padx=5)
+                    self.e_top_one = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, bg='#252525', fg= "#C8C8C8")
+                    self.e_top_one.grid(column=1, row=1, padx=5, pady=5)
+                    self.e_top_two = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525',fg= "#C8C8C8")
+                    self.e_top_two.grid(column=1, row=2, padx=5, pady=5)
 
-            if self.get_device == 'TMARC (UTP)':
-                Label(self.fm_one_top, text="Management data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=0, columnspan=3, pady=10)
-                Label(self.fm_one_top, text="Tmarc Name", background="#252525", fg= "#C8C8C8").grid(column=0, row=1, padx=5)
-                self.e_top_two = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
-                self.e_top_two.grid(column=1, row=1, padx=5, pady=5)
+                if self.get_device == 'TMARC (UTP)':
+                    Label(self.fm_one_top, text="Management data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=0, columnspan=3, pady=10)
+                    Label(self.fm_one_top, text="Tmarc Name", background="#252525", fg= "#C8C8C8").grid(column=0, row=1, padx=5)
+                    self.e_top_two = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
+                    self.e_top_two.grid(column=1, row=1, padx=5, pady=5)
 
-            Label(self.fm_one_top, text="Service data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=5, columnspan=2, pady=5)
-            Label(self.fm_one_top, text="*" ,background="#252525", fg= "#922121", font=('20')).grid(column=1, row=5, columnspan=3, pady=5)
-            Label(self.fm_one_top, text="Old interface", background="#252525", fg= "#C8C8C8").grid(column=0, row=6, padx=5, pady=5)
-            Label(self.fm_one_top, text="New interface", background="#252525", fg= "#C8C8C8").grid(column=0, row=7, padx=5, pady=5)
-            self.e_top_five = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightbackground="#C8C8C8",highlightthickness=1, background='#252525',fg= "#C8C8C8")
-            self.e_top_five.grid(column=1, row=6, padx=5, pady=5)
-            self.e_top_six = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightbackground="#C8C8C8",highlightthickness=1, background='#252525', fg= "#C8C8C8")
-            self.e_top_six.grid(column=1, row=7, padx=5, pady=5)
-            ttk.Button(self.fm_one_top, text="Start", width=28, style='TButton', command=self.script_generator).grid(column=0, row=8, columnspan=2,pady=15, padx=5)
+                Label(self.fm_one_top, text="Service data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=5, columnspan=2, pady=5)
+                Label(self.fm_one_top, text="*" ,background="#252525", fg= "#922121", font=('20')).grid(column=1, row=5, columnspan=3, pady=5)
+                Label(self.fm_one_top, text="Old interface", background="#252525", fg= "#C8C8C8").grid(column=0, row=6, padx=5, pady=5)
+                Label(self.fm_one_top, text="New interface", background="#252525", fg= "#C8C8C8").grid(column=0, row=7, padx=5, pady=5)
+                self.e_top_five = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightbackground="#C8C8C8",highlightthickness=1, background='#252525',fg= "#C8C8C8")
+                self.e_top_five.grid(column=1, row=6, padx=5, pady=5)
+                self.e_top_six = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightbackground="#C8C8C8",highlightthickness=1, background='#252525', fg= "#C8C8C8")
+                self.e_top_six.grid(column=1, row=7, padx=5, pady=5)
+                ttk.Button(self.fm_one_top, text="Start", width=28, style='TButton', command=self.script_generator).grid(column=0, row=8, columnspan=2,pady=15, padx=5)
 
-            if self.get_device == 'S2300':
-                return self.e_top_one, self.e_top_two, self.e_top_tree, self.e_top_four,self.e_top_five, self.e_top_six
-            if self.get_device == 'ATN':
-                return self.e_top_two, self.e_top_tree, self.e_top_four,self.e_top_five, self.e_top_six
-            if self.get_device == 'TMARC (FO)':
-                return self.e_top_one, self.e_top_two, self.e_top_five, self.e_top_six
-            if self.get_device == 'TMARC (UTP)':
-                return self.e_top_two, self.e_top_five, self.e_top_six
-            if self.get_device == 'CORE' or 'NO MGMT':
-                return self.e_top_five, self.e_top_six
+                if self.get_device == 'S2300':
+                    return self.e_top_one, self.e_top_two, self.e_top_tree, self.e_top_four,self.e_top_five, self.e_top_six
+                if self.get_device == 'ATN':
+                    return self.e_top_two, self.e_top_tree, self.e_top_four,self.e_top_five, self.e_top_six
+                if self.get_device == 'TMARC (FO)':
+                    return self.e_top_one, self.e_top_two, self.e_top_five, self.e_top_six
+                if self.get_device == 'TMARC (UTP)':
+                    return self.e_top_two, self.e_top_five, self.e_top_six
+                if self.get_device == 'CORE' or 'NO MGMT':
+                    return self.e_top_five, self.e_top_six
 
     def script_generator(self):
         h4_name = self.e_main_cero.get().strip()
