@@ -3,7 +3,6 @@ class Template_residential:
     def __init__(self, residential_parameters, device_type):
 
         self.residential_parameters = residential_parameters
-        self.physical_interface = residential_parameters['NEW_INTERFACE']
         self.device_type = device_type
         self.name_device = residential_parameters['NAME']
         self.id = residential_parameters['ID']
@@ -28,24 +27,43 @@ class Template_residential:
         ]
         return name_of_device
 
-    def templates_main(self):
+    def templates_create_eth(self):
 
-        interface_temp = [
-            f'interface Eth-TrunkETH_NUMBER\n',                  
+        eth_temp = [
+            f'interface Eth-Trunk{self.eth_number}\n',                  
             f'#\n',
-            f' interface GigabitEthernet{self.physical_interface}\n',
+        ]
+        return eth_temp
+
+    def physical_int(self, inter):
+            
+        phy_int = [
+            f' interface GigabitEthernet{inter}\n',
             f' negotiation auto\n',
             f' description Conexion con {self.device_type} {self.name_device} ID: {self.id} Tipo: Acceso Fijo Eth-Trunk{self.eth_number}\n',
             f' undo shutdown\n',
             f' eth-trunk {self.eth_number}\n'
             f' #\n',
+        ]
+        return phy_int
+
+    def int_eth(self):
+            
+        eth_int = [
             f'interface Eth-Trunk{self.eth_number}\n',
             f' mtu 9216\n',
             f' description Conexion con {self.device_type} {self.name_device} Tipo: Acceso Fijo\n',
             f' statistic enable\n',
-            f'#\n'
         ]
-        return interface_temp
+
+        if self.residential_parameters['NEW_INTERFACE_1'] != "" and self.residential_parameters['NEW_INTERFACE_2'] != "":
+            eth_int.append(' mode lacp-static\n')
+
+        return eth_int
+
+    def add_numeral(self):
+        numeral = ['#\n']
+        return numeral
 
     def templates_qos(self):
 
@@ -60,7 +78,6 @@ class Template_residential:
             f' port-queue cs6 pq shaping shaping-percentage 10 outbound\n',
             f' port-queue cs7 pq shaping shaping-percentage 5 outbound\n',
             f' qos phb disable\n',
-            f' mode lacp-static\n',
             f'#\n'
         ]
 
@@ -90,7 +107,7 @@ class Template_residential:
         ]
 
         if num > 0:
-            speedy[6] = f' user-vlan 1 4094 qinq {vlan_speedy}\n'
+            speedy[8] = f' user-vlan 1 4094 qinq {vlan_speedy}\n'
 
         return speedy
 

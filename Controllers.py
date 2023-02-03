@@ -1,7 +1,7 @@
 from Check_Version import version
 from Open_File import open_txt, append_txt
 from Establish_Parameters import parameters, residential_parameters
-from Reset_parameters import reset_establish_parameters
+from Reset_parameters import reset_establish_parameters, reset_residential_parameters
 from tkinter import messagebox
 import re
 
@@ -52,7 +52,7 @@ class Controller:
         self.path_show = f'{work_space}/CML_{self.core_name}_PRECHECK.txt'
         self.patterns = version.check_version(self.core_list)
         self.residential_parameters = residential_parameters
-        self.residential_parameters['NEW_INTERFACE'] = int_service
+        self.residential_parameters['NEW_INTERFACE_1'] = int_service
         self.parameters = parameters
         self.parameters['NEW_INTERFACE'] = int_service
         self.parameters['CABLING_TYPE'] = cabling_type
@@ -218,7 +218,7 @@ class Controller:
 
     def template_display(self):
 
-        template_display_obj = Display_template(self.parameters, self.path_display, display_template)
+        template_display_obj = Display_template(self.parameters, self.path_display)
         template_display_obj.display_command()
     
     def template_show(self):
@@ -241,14 +241,16 @@ class Controller:
 
     #################################################### RESIDENTIAL FUNTIONS
 
-    def get_residential_data(self):
+    def get_residential_data(self, interface_2, id, eth):
 
+        self.residential_parameters['NEW_INTERFACE_2'] = interface_2
+        self.residential_parameters['ID'] = id
+        self.residential_parameters['NEW_ETH'] = eth
         peers_obj = Get_peers_data()
         get_data_obj = Filter_residential(self.residential_parameters)
         get_data_obj.filter_data(self.core_list, self.core_interface, self.patterns['id'], peers_obj)
-        #print(self.residential_parameters)
 
-    def template_residential(self):
+    def template_residential(self, device_type):
 
         template_residential_obj = Template_residential(self.residential_parameters, device_type)
         replacement_obj = Service_template_res(self.residential_parameters, self.path_script)
@@ -259,9 +261,16 @@ class Controller:
 
         replacement_obj.write_template(template_residential_obj.headers_service())
 
-        replacement_obj.write_template(template_residential_obj.templates_main())
+        replacement_obj.write_template(template_residential_obj.templates_create_eth())
+        replacement_obj.write_template(template_residential_obj.physical_int(self.residential_parameters['NEW_INTERFACE_1']))
+        if self.residential_parameters['NEW_INTERFACE_2'] != "":
+            replacement_obj.write_template(template_residential_obj.physical_int(self.residential_parameters['NEW_INTERFACE_2']))
+        replacement_obj.write_template(template_residential_obj.int_eth())
+
         if device_type == 'GPON':
             replacement_obj.write_template(template_residential_obj.templates_qos())
+        else:
+            replacement_obj.write_template(template_residential_obj.add_numeral())
 
         if self.residential_parameters['VLAN']['TRAFFIC INTERNET'] != []:
             for x in range(len(self.residential_parameters['VLAN']['TRAFFIC INTERNET'])):
@@ -332,10 +341,20 @@ class Controller:
                     self.residential_parameters['VLAN']['TRAFFIC ENTERPRISE'][x][0],
                     self.residential_parameters['VLAN']['TRAFFIC ENTERPRISE'][x][1],
                 ))
+    
+    def template_display_res(self):
+
+        template_display_obj = Display_template(self.residential_parameters, self.path_display)
+        template_display_obj.display_residential_cmd()
+
+    def reset_parameters_res(self):
+        self.parameters = reset_residential_parameters(self.residential_parameters)
+    
+        
         
 
 #RESIDENTIAL TEST
-
+"""
 path = "C:/Users/awx910701/Documents/Configuraciones/Script/2023/Febrero/Santa Rosa/Old Device/CESRS01.txt"
 ce_int = "TenGigabitEthernet4/3"
 
@@ -352,7 +371,7 @@ cabling_type = 'FIBER'
 manager = Controller(path, ce_int, work_space, h4_name, device_type, new_int, cabling_type)
 manager.get_residential_data()
 manager.template_residential()
-
+"""
 #ENTERPRISE TEST
 """
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"

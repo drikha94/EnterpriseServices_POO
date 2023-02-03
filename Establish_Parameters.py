@@ -116,7 +116,8 @@ residential_parameters = {
         'IPTV MULTICAST': [],
         'IPTV UNICAST': []
     },
-    'NEW_INTERFACE': '',
+    'NEW_INTERFACE_1': '',
+    'NEW_INTERFACE_2': '',
     'NEW_ETH': 'XX',
     'ID': 'XXXXX'
 }

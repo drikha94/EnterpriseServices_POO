@@ -2,7 +2,7 @@ import re
 
 class Get_residential_data:
 
-    def get_data(self, parameters, block_list, ce_cfg, gid_routes, iptv_unicast_routes, version, peers_obj):
+    def get_data(self, residential_parameters, block_list, ce_cfg, gid_routes, iptv_unicast_routes, version, peers_obj):
         
         package = []
         descrip = "".join(filter(lambda x: 'description ' in x, block_list)).lower()
@@ -22,32 +22,32 @@ class Get_residential_data:
             if re.findall('internet', descrip):
                 package.append(vlan)
                 package.append(dslam_name)
-                parameters['VLAN']['TRAFFIC INTERNET'].append(package)
+                residential_parameters['VLAN']['TRAFFIC INTERNET'].append(package)
 
             """IDENTIFY VOIP VLAN"""
             if list(filter(lambda x: 'VOIP-IAD' in x, block_list)) != [] or re.findall('voip', descrip):
                 package.append(vlan)
                 package.append(dslam_name)
-                parameters['VLAN']['TRAFFIC VOIP'].append(package)
+                residential_parameters['VLAN']['TRAFFIC VOIP'].append(package)
 
             """IDENTIFY MODENS VLAN"""
             if re.findall('modem', descrip):
                 package.append(vlan)
                 package.append(dslam_name)
-                parameters['VLAN']['GESTION MODEMS'].append(package)
+                residential_parameters['VLAN']['GESTION MODEMS'].append(package)
 
             """IDENTIFY ENTERPRISE TRAFFIC VLAN"""
             if re.findall('trafico empresa', descrip):
                 package.append(vlan)
                 package.append(dslam_name)
-                parameters['VLAN']['TRAFFIC ENTERPRISE'].append(package)
+                residential_parameters['VLAN']['TRAFFIC ENTERPRISE'].append(package)
 
             """IDENTIFY GID1 VLAN"""
             if list(filter(lambda x: 'gid1' in x, block_list)) != []:
                 routes_list = []
                 package.append(vlan)
                 package.append(dslam_name)
-                #parameters['VLAN']['GESTION GID1'].append(package)
+                #residential_parameters['VLAN']['GESTION GID1'].append(package)
 
                 """GET GID1 STATIC ROUTES"""
                 static_routes = list(filter(lambda x: vlan in x, gid_routes))
@@ -64,7 +64,7 @@ class Get_residential_data:
                             route = route[0].replace('/', ' ').split()
                             routes_list.append(route)
                 package.append(routes_list)
-                parameters['VLAN']['GESTION GID1'].append(package)
+                residential_parameters['VLAN']['GESTION GID1'].append(package)
                 
             """IDENTIFY NGN TRAFFIC VLAN"""
             if re.findall('trafico', descrip) and list(filter(lambda x: 'NGN' in x, block_list)) != []:
@@ -79,7 +79,7 @@ class Get_residential_data:
                 if ipmask != "":
                     ipmask = ipmask.replace(pattern, "").strip()
                     package.append(ipmask)
-                parameters['VLAN']['NGN TRAFFIC'].append(package)
+                residential_parameters['VLAN']['NGN TRAFFIC'].append(package)
 
             """IDENTIFY NGN SENIALIZATION VLAN"""
             if not re.findall('trafico', descrip) and list(filter(lambda x: 'NGN' in x, block_list)) != []:
@@ -94,7 +94,7 @@ class Get_residential_data:
                 if ipmask != "":
                     ipmask = ipmask.replace(pattern, "").strip()
                     package.append(ipmask)
-                parameters['VLAN']['NGN SENIALIZATION'].append(package)
+                residential_parameters['VLAN']['NGN SENIALIZATION'].append(package)
 
             if list(filter(lambda x: 'IPTV-UNICAST' in x, block_list)) != []:
                 #peers_obj = Get_peers_data()
@@ -135,7 +135,7 @@ class Get_residential_data:
                                     routes.append(z)
                     package.append(routes)
 
-                parameters['VLAN']['IPTV UNICAST'].append(package)
+                residential_parameters['VLAN']['IPTV UNICAST'].append(package)
             
             if list(filter(lambda x: 'IPTV-MULTICAST' in x, block_list)) != []:
 
@@ -151,11 +151,11 @@ class Get_residential_data:
                     ipmask = ipmask.replace(pattern, "").strip()
                     package.append(ipmask)
 
-                parameters['VLAN']['IPTV MULTICAST'].append(package)
+                residential_parameters['VLAN']['IPTV MULTICAST'].append(package)
 
             
         else:
-            parameters['NAME'] = dslam_name
+            residential_parameters['NAME'] = dslam_name
         
 
 

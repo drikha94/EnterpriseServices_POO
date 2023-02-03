@@ -54,7 +54,7 @@ class Main_aplicacion:
         ttk.Button(self.myframe, text="Mobile", width=17, style = "TButton", command=self.insert_mobile_list, state='disabled').grid(row=4, column=0, padx=(10,5), pady=5)
         ttk.Button(self.lb_fm, width=5,style = "TButton", image=self.txt_image, command=self.open_file).grid(row=0, column=2, padx=(10,10), pady=(0,5))
         ttk.Button(self.lb_fm, width=5, style = "TButton", image=self.dir_image, command=self.open_dir).grid(row=1, column=2, padx=(10,10), pady=(0,5))
-        ttk.Button(self.lb_fm, text="Continue", width=28, style = "TButton", command=self.button_enterprises_services).grid(row=1, column=0, columnspan=2, padx=(15,5), pady=(0,10))
+        ttk.Button(self.lb_fm, text="Continue", width=28, style = "TButton", command=self.button_services).grid(row=1, column=0, columnspan=2, padx=(15,5), pady=(0,10))
         self.e_main_cero = Entry(self.lb_fm, width=15, justify=CENTER, highlightcolor="#597EE3", highlightbackground="#C8C8C8", highlightthickness=1, background='#252525', fg='#B9B4C3')
         self.e_main_cero.grid(row=0, column=1, padx=(10,5))
         Label(self.lb_fm, text='H4 NAME', background='#252525', foreground='#B9B4C3').grid(column=0, row=0, padx=10)
@@ -122,7 +122,7 @@ class Main_aplicacion:
         self.txt_image = self.txt_image.subsample(20)
         self.dir_image = self.dir_image.subsample(30)
 
-    def button_enterprises_services(self):
+    def button_services(self):
 
         residential_list = ['DSLAM', 'GPON']
         enterprise_list = ['S2300','TMARC (FO)','TMARC (UTP)', 'ATN', 'CORE', 'NO MGMT']
@@ -131,6 +131,7 @@ class Main_aplicacion:
             messagebox.showinfo("Warning", "Type of device, directory, legacy configuration path and H4 name can't be empty")
 
         if self.selection != () and self.core_path != "" and self.work_space != "" and self.e_main_cero.get():
+        #if self.selection:
             self.get_device = self.listbox.get(self.selection[0])
             self.top = Toplevel(bg = "black", padx=10, pady=10)
             self.top.grab_set()
@@ -140,7 +141,23 @@ class Main_aplicacion:
             self.fm_one_top.grid(row=0,column=0, sticky=W)
 
             if self.get_device in residential_list:
-                pass
+                Label(self.fm_one_top, text="Service data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=0, pady=5, columnspan=3)
+                Label(self.fm_one_top, text="Old interface" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=1, pady=5)
+                Label(self.fm_one_top, text="New interface" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=2, pady=5)
+                Label(self.fm_one_top, text="New Eth-Trunk" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=3, pady=5)
+                Label(self.fm_one_top, text="ID (Path)" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=4, pady=5)
+                self.e_top_cero = Entry(self.fm_one_top, width=19, highlightcolor="red",highlightthickness=1, bg='#252525', fg= "#C8C8C8")
+                self.e_top_cero.grid(column=1, row=1, pady=5, padx=5, columnspan=2)
+                self.e_top_one = Entry(self.fm_one_top, width=8, highlightcolor="red",highlightthickness=1, bg='#252525', fg= "#C8C8C8")
+                self.e_top_one.grid(column=1, row=2, pady=5, padx=5)
+                self.e_top_two = Entry(self.fm_one_top, width=8, highlightcolor="red",highlightthickness=1, bg='#252525', fg= "#C8C8C8")
+                self.e_top_two.grid(column=2, row=2, pady=5, padx=5)
+                self.e_top_tree = Entry(self.fm_one_top, width=19, highlightcolor="red",highlightthickness=1, bg='#252525', fg= "#C8C8C8")
+                self.e_top_tree.grid(column=1, row=3, pady=5, padx=5, columnspan=2)
+                self.e_top_four = Entry(self.fm_one_top, width=19, highlightcolor="red",highlightthickness=1, bg='#252525', fg= "#C8C8C8")
+                self.e_top_four.grid(column=1, row=4, pady=5, padx=5, columnspan=2)
+                ttk.Button(self.fm_one_top, text="Start", width=32, style='TButton', command=self.script_generator_residential).grid(column=0, row=5, columnspan=3,pady=15)
+                
 
             if self.get_device in enterprise_list:
                 if self.get_device == 'S2300':
@@ -193,7 +210,7 @@ class Main_aplicacion:
                 self.e_top_five.grid(column=1, row=6, padx=5, pady=5)
                 self.e_top_six = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightbackground="#C8C8C8",highlightthickness=1, background='#252525', fg= "#C8C8C8")
                 self.e_top_six.grid(column=1, row=7, padx=5, pady=5)
-                ttk.Button(self.fm_one_top, text="Start", width=28, style='TButton', command=self.script_generator).grid(column=0, row=8, columnspan=2,pady=15, padx=5)
+                ttk.Button(self.fm_one_top, text="Start", width=28, style='TButton', command=self.script_generator_enterprise).grid(column=0, row=8, columnspan=2,pady=15, padx=5)
 
                 if self.get_device == 'S2300':
                     return self.e_top_one, self.e_top_two, self.e_top_tree, self.e_top_four,self.e_top_five, self.e_top_six
@@ -205,8 +222,34 @@ class Main_aplicacion:
                     return self.e_top_two, self.e_top_five, self.e_top_six
                 if self.get_device == 'CORE' or 'NO MGMT':
                     return self.e_top_five, self.e_top_six
+    
+    def script_generator_residential(self):
+        h4_name = self.e_main_cero.get().strip()
+        cabling_type = 'FIBER'
+        id = self.e_top_four.get().strip()
+        old_interface = self.e_top_cero.get().strip()
+        new_inter_one = self.e_top_one.get().strip()
+        new_inter_two = self.e_top_two.get().strip()
+        eth_trunk = self.e_top_tree.get().strip()
+        device_type = self.get_device
 
-    def script_generator(self):
+        if old_interface == "" or new_inter_one == "" or eth_trunk == "":
+            messagebox.showinfo("Warning", "Old interface, New interface and Eth-Trunk can't be empty")
+        else:
+            manager_res = Controller(self.core_path, old_interface, self.work_space, h4_name, device_type, new_inter_one, cabling_type)
+            manager_res.get_residential_data(new_inter_two, id, eth_trunk)
+            manager_res.template_residential(device_type)
+            manager_res.template_display_res()
+            manager_res.reset_parameters_res()
+            messagebox.showinfo("successful", "The configuration was created successfully")
+            continuar = messagebox.askquestion("Cotinue", "Do you want continue with another service?")
+            if continuar == "no":
+                self.root.destroy()
+            else:
+                self.top.destroy()
+
+
+    def script_generator_enterprise(self):
         h4_name = self.e_main_cero.get().strip()
         cabling_type = 'FIBER'
         name_service = 'DEVICE_NAME'

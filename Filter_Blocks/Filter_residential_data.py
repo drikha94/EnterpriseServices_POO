@@ -4,9 +4,9 @@ import re
 
 class Filter_residential:
 
-    def __init__(self, parameters):
+    def __init__(self, residential_parameters):
 
-        self.parameters = parameters
+        self.residential_parameters = residential_parameters
         self.main_filter = Filter_main_blocks()
         self.clean_data = Get_residential_data()
         self.gid_routes = []
@@ -39,6 +39,6 @@ class Filter_residential:
         filter_inter = [x for x in inter if re.findall(f'^interface', x)]
         for x in range(len(filter_inter)):
             block = self.main_filter.block(ce_cfg, [filter_inter[x]], data_type, '!', True, False)
-            self.clean_data.get_data(self.parameters, block, ce_cfg, self.gid_routes, self.iptv_unicast_routes, version, peers_obj)
+            self.clean_data.get_data(self.residential_parameters, block, ce_cfg, self.gid_routes, self.iptv_unicast_routes, version, peers_obj)
 
 

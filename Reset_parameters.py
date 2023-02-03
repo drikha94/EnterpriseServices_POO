@@ -40,3 +40,21 @@ def reset_establish_parameters(parameters):
     parameters['DISPLAY_COMMAND']['interface'], parameters['DISPLAY_COMMAND']['vlan'] =  'GigabitEthernet', ''
 
     return parameters
+
+def reset_residential_parameters(residential_parameters):
+
+    residential_parameters['NAME'] = ''
+    residential_parameters['VLAN']['TRAFFIC INTERNET'] = []
+    residential_parameters['VLAN']['TRAFFIC VOIP'] = []
+    residential_parameters['VLAN']['GESTION MODEMS'] = []
+    residential_parameters['VLAN']['TRAFFIC ENTERPRISE'] = []
+    residential_parameters['VLAN']['GESTION GID1'] = []
+    residential_parameters['VLAN']['NGN TRAFFIC'] = []
+    residential_parameters['VLAN']['NGN SENIALIZATION'] = []
+    residential_parameters['VLAN']['IPTV MULTICAST'] = []
+    residential_parameters['VLAN']['IPTV UNICAST'] = []
+    residential_parameters['NEW_INTERFACE_1'] = ''
+    residential_parameters['NEW_INTERFACE_2'] = ''
+    residential_parameters['NEW_ETH'] = 'XX'
+    residential_parameters['ID'] = 'XXXXX'
+
