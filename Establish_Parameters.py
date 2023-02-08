@@ -100,7 +100,17 @@ parameters = {
         'ID': 'ID_NUMBER',
         'ADRED': 'ADRED_NUMBER'
     },
-    'CABLING_TYPE':'FIBER'
+    'CABLING_TYPE':'FIBER',
+    'H4_PORT_STATE':{
+        'RX_POWER': '-',
+        'TX_POWER': '-',
+        'BW': '-',
+        'SFP': '-',
+        'CABLING': '-',
+        'TRAFFIC_IN': '-',
+        'TRAFFIC_OUT': '-',
+        'STATE': '-'
+    }
 }
 
 residential_parameters = {

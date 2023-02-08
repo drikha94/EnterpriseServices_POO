@@ -308,7 +308,13 @@ class Main_aplicacion:
             manager_ctls.alarm()
             manager_ctls.reset_parameters()
 
-            messagebox.showinfo("successful", "The configuration was created successfully")
+            messagebox.showinfo("Summary",
+                f"""H4 Interface: x/x/x
+    State: UP 
+    Rx Power: -8.00dBm, Tx Power: -5.43dBm
+    Bandwidth: 1G, SFP: 1G, Cabling: Fiber
+    Traffic input: 0.11%, Traffic output: 0.27%"""
+                ) 
             continuar = messagebox.askquestion("Cotinue", "Do you want continue with another service?")
             if continuar == "no":
                 self.root.destroy()

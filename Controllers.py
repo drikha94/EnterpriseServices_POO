@@ -26,6 +26,7 @@ from Filter_Blocks.Bgp import Bgp_filter_block
 from Filter_Blocks.Rip import Rip_filter_block
 from Filter_Blocks.Policy import Policy_filter_block
 from Filter_Blocks.Route_map import Map_filter_block
+from Filter_Blocks.Filter_H4_port import Filter_h4_port
 from Filter_Blocks.Filter_residential_data import Filter_residential
 
 #IMPORTACION DE LOS MODULOS QUE RETORNAN LOS DATOS OBTENIDOS DE LOS BLOQUES
@@ -38,6 +39,7 @@ from Clean_Blocks.Get_Possible_Peers import Get_peers_data
 from Clean_Blocks.Get_Traffic_Policy import Get_traffic_policy
 from Clean_Blocks.Get_Map_Data import Get_map_data
 from Clean_Blocks.Get_Prefix_Data import Get_prefix_data
+from Clean_Blocks.Get_H4_Interface_Data import Get_h4_interface_data
 
 class Controller:
 
@@ -236,6 +238,16 @@ class Controller:
         if self.parameters['BGP']['ATTRIBUTES']['password cipher'][0] == True and self.parameters['INTER']['VPN'] != 'BCOPATAGONIA':
             messagebox.showwarning("Warning", "The peer have a password, please ask the customer")
     
+    def h4_port(self, path, interface):
+        self.h4_list = open_txt(path)
+        h4_int_obj = Filter_h4_port(self.h4_list, interface)
+        clean_h4_int = Get_h4_interface_data()
+        block_list = h4_int_obj.interfaces_filter()
+        if block_list != []:
+            clean_h4_int.get_data(self.parameters, block_list)
+        
+        print(self.parameters['H4_PORT_STATE'])
+
     def reset_parameters(self):
         self.parameters = reset_establish_parameters(self.parameters)
 
@@ -350,7 +362,13 @@ class Controller:
     def reset_parameters_res(self):
         self.parameters = reset_residential_parameters(self.residential_parameters)
     
-        
+
+
+
+
+
+
+
         
 
 #RESIDENTIAL TEST
@@ -373,7 +391,6 @@ manager.get_residential_data()
 manager.template_residential()
 """
 #ENTERPRISE TEST
-"""
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
 core_int = "9/3.341180"
 
@@ -393,6 +410,10 @@ work_space = "C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre
 
 h4_name = 'H4-SJ-SJN01'
 
+#get h4 port
+path_h4_cfg = 'C:/Users/awx910701/Documents/Configuraciones/Script/2023/Enero/Rada Tilly/Old Device/H4-CB-CRV01.txt'
+interface = '8/0/7'
+
 ip_mgmt='10.10.10.10'
 device_name = 'prueba'
 new_int= '88'
@@ -411,13 +432,17 @@ manager.rip_parameters()
 manager.map_parameters()
 manager.prefix_parameters()
 manager.policy_parameters()
-manager.template_management(ip_mgmt, device_name, cabling_type, id_service, adred)
-manager.template_enterprise(cabling_type)
-manager.template_display()
-manager.template_show()
-manager.alarm()
-manager.reset_parameters()
-"""
+manager.h4_port(path_h4_cfg, interface)
+#manager.template_management(ip_mgmt, device_name, cabling_type, id_service, adred)
+#manager.template_enterprise(cabling_type)
+#manager.template_display()
+#manager.template_show()
+#manager.alarm()
+#manager.reset_parameters()
+
+
+
+
 
 
 

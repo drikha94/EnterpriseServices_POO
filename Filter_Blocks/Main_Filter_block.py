@@ -19,6 +19,10 @@ class Filter_main_blocks:
                 if validation == True and data_type != 'traffic_policy':
                     if re.findall(break_point, list[x]) and list[x] == break_point:
                         break
+                
+                if validation == True and data_type == 'h4_port':
+                    if re.findall(break_point, list[x]):
+                        break
 
                 if data_type == 'traffic_policy':
                     if re.findall("policy-map", list[x]) and x > first_index:
