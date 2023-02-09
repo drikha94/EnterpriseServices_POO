@@ -20,6 +20,7 @@ class Show_template:
 
         status_inter = f'show {inter}\n'
         new_template.append(status_inter)
+        new_template.append('!\n')
 
         if peer != "":
             if vpn != "":
@@ -29,24 +30,27 @@ class Show_template:
             
             if self.patterns['id'] == 1:
                 if vpn != "":
-                    command_bgp_one = f'show bgp vpnv4 unicast vrf {vpn} neighbors {peer} routes\n'
-                    command_bgp_two = f'show bgp vpnv4 unicast vrf {vpn} neighbors {peer} advertised-routes\n'
+                    command_bgp_one = f'show bgp vpnv4 unicast vrf {vpn} neighbors {peer} routes | inc Total\n'
+                    command_bgp_two = f'show bgp vpnv4 unicast vrf {vpn} neighbors {peer} advertised-routes | inc Total\n'
                 else:
-                    command_bgp_one = f'show bgp vpnv4 unicast all neighbors {peer} routes\n'
-                    command_bgp_two = f'show bgp vpnv4 unicast all neighbors {peer} advertised-routes\n'
+                    command_bgp_one = f'show bgp vpnv4 unicast all neighbors {peer} routes | inc Total\n'
+                    command_bgp_two = f'show bgp vpnv4 unicast all neighbors {peer} advertised-routes | inc Total\n'
 
             if self.patterns['id'] == 2:
                 if vpn != "":
-                    command_bgp_one = f'show bgp vrf {vpn} neighbors {peer} routes\n'
-                    command_bgp_two = f'show bgp vrf {vpn} neighbors {peer} advertised-routes\n'
+                    command_bgp_one = f'show bgp vrf {vpn} neighbors {peer} routes | inc Total\n'
+                    command_bgp_two = f'show bgp vrf {vpn} neighbors {peer} advertised-routes | inc Total\n'
                 else:
-                    command_bgp_one = f'show bgp vpnv4 unicast neighbors {peer} routes\n'
-                    command_bgp_two = f'show bgp vpnv4 unicast neighbors {peer} advertised-routes\n'
+                    command_bgp_one = f'show bgp vpnv4 unicast neighbors {peer} routes | inc Total\n'
+                    command_bgp_two = f'show bgp vpnv4 unicast neighbors {peer} advertised-routes | inc Total\n'
 
 
             new_template.append(command_ping_peer)
+            new_template.append('!\n')
             new_template.append(command_bgp_one)
+            new_template.append('!\n')
             new_template.append(command_bgp_two)
+            new_template.append('!\n')
 
         if routes != []:
             for x in range(len(self.parameters['ROUTES'])):
@@ -61,7 +65,9 @@ class Show_template:
 
                 if command_peer not in new_template:
                     new_template.append(command_peer)
+                    new_template.append('!\n')
                 new_template.append(command)
+                new_template.append('!\n')
         new_template.append('#\n')
         new_template.append('#\n')
 

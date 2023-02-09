@@ -391,6 +391,7 @@ manager.get_residential_data()
 manager.template_residential()
 """
 #ENTERPRISE TEST
+"""
 path ="C:/Users/awx910701/Documents/Configuraciones/Script/2022/Noviembre/San Juan/Old Device/CORE-SJN6.gics.ar.telefonica.com-2022-10-31_02_22_09.txt"
 core_int = "9/3.341180"
 
@@ -433,12 +434,12 @@ manager.map_parameters()
 manager.prefix_parameters()
 manager.policy_parameters()
 manager.h4_port(path_h4_cfg, interface)
-#manager.template_management(ip_mgmt, device_name, cabling_type, id_service, adred)
-#manager.template_enterprise(cabling_type)
-#manager.template_display()
-#manager.template_show()
-#manager.alarm()
-#manager.reset_parameters()
+manager.template_management(ip_mgmt, device_name, cabling_type, id_service, adred)
+manager.template_enterprise(cabling_type)
+manager.template_display()
+manager.template_show()
+manager.alarm()
+manager.reset_parameters()"""
 
 
 
