@@ -9,6 +9,7 @@ class Display_template:
 
     def display_command(self):
 
+        new_interface = self.parameters['NEW_INTERFACE']
         vpn = 'INFOINTERNET' if self.parameters['INTER']['VPN'] == "" else self.parameters['INTER']['VPN']
         new_template = []
         peer, routes, ref = self.parameters['BGP']['PEER'], self.parameters['ROUTES'], self.parameters['INTER']['REF']
@@ -19,18 +20,26 @@ class Display_template:
         new_template.append(headers)
         new_template.append('#\n')
 
-        check_power = 'display interface brief ' + command['interface'] + command['vlan'] + '\n'
+        if command['vlan'] != "":
+            check_power = 'display interface brief ' + command['interface'] + new_interface + '.' + command['vlan'] + '\n'
+        else:
+            check_power = 'display interface brief ' + command['interface'] + new_interface + '\n'
         new_template.append(check_power)
 
         inter = command['interface'].replace('GigabitEthernet', '').replace('Eth-Trunk', '')
-        check_arp = 'display arp all | inc ' +  inter + command['vlan'] + '\n'
+        if command['vlan'] != "":
+            check_arp = 'display arp all | inc ' +  inter + new_interface + '.' +command['vlan'] + '\n'
+        else:
+            check_arp = 'display arp all | inc ' +  inter + new_interface + '\n'
         new_template.append(check_arp)
 
         if peer != "":
             ping = f'ping -vpn-instace {vpn} -a {ip} {peer}\n'
-            adv_routes = f'display bgp vpnv4 vpn-instance {vpn} routing-table peer {peer} advertised-routes\n'
-            rcv_routes = f'display bgp vpnv4 vpn-instance {vpn} routing-table peer {peer} accepted-routes\n'
+            bgp_status = f'display bgp vpnv4 vpn-instance {vpn} peer | inc {peer}\n'
+            adv_routes = f'display bgp vpnv4 vpn-instance {vpn} routing-table peer {peer} advertised-routes | inc Total\n'
+            rcv_routes = f'display bgp vpnv4 vpn-instance {vpn} routing-table peer {peer} accepted-routes | inc Total\n'
             new_template.append(ping)
+            new_template.append(bgp_status)
             new_template.append(adv_routes)
             new_template.append(rcv_routes)
         
