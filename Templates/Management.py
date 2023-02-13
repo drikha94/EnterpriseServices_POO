@@ -5,12 +5,14 @@ class Management_template:
     def __init__(self, parameters, path_script, headers_template):
         
         self.parameters = parameters
+        self.name_h4 = parameters['H4_NAME']
         self.interface_type = parameters['DISPLAY_COMMAND']['interface']
         self.new_interface = parameters['NEW_INTERFACE']
         self.description = parameters['MANAGEMENT_DATA']['device_name']
         self.loopback = parameters['MANAGEMENT_DATA']['mgmt_ip']
         self.id = parameters['MANAGEMENT_DATA']['ID']
         self.adred = parameters['MANAGEMENT_DATA']['ADRED']
+        self.razon_social = parameters['MANAGEMENT_DATA']['RAZON_SOCIAL']
         self.description_service = parameters['INTER']['DESCRIP']
         self.path_script = path_script
         self.add_script = open(self.path_script, "a")
@@ -26,7 +28,7 @@ class Management_template:
         f'#\n',
         f'interface {self.interface_type}{self.new_interface}.4002\n',
         f' vlan-type dot1q 4002\n',
-        f' description Conexion con {self.description} Tipo: Gestion S2300\n',
+        f' description LNK:{self.id}#{self.description}<->{self.name_h4}#RS:{self.razon_social} #GESTION\n',
         f' ip binding vpn-instance Mgmt-HL5\n',
         f' ip address unnumbered interface Loopback4002\n',
         f' statistic enable\n',
@@ -35,7 +37,7 @@ class Management_template:
         f'#\n',
         f'interface {self.interface_type}{self.new_interface}.4000\n',
         f' vlan-type dot1q 4000\n',
-        f' description Conexion con {self.description} Tipo: Gestion S2300\n',
+        f' description LNK:{self.id}#{self.description}<->{self.name_h4}#RS:{self.razon_social} #GESTION\n',
         f' ip binding vpn-instance Mgmt-HL5\n',
         f' ip address unnumbered interface Loopback4000\n',
         f' statistic enable\n',
@@ -43,7 +45,7 @@ class Management_template:
         f'ip route-static vpn-instance Mgmt-HL5 {self.loopback} 255.255.255.255 {self.interface_type}{self.new_interface}.4000 {self.loopback}\n',
         f'#\n',
         f'interface {self.interface_type}{self.new_interface}\n',
-        f' description Conexion con {self.description} ID: {self.id} ADRED: {self.adred} Tipo: Acceso\n',
+        f' description LNK:{self.id}#{self.description}<->{self.name_h4}#RS:{self.razon_social}\n',
         f'#\n',
         f'#\n'
         ]
@@ -91,11 +93,11 @@ class Management_template:
         f'########## {self.description}\n',
         f'#\n',
         f'interface {self.interface_type}{self.new_interface}\n',
-        f' description Conexion con {self.description} ID: {self.id} ADRED: {self.adred} Tipo: Acceso\n',
+        f' description LNK:{self.id}#{self.description}<->{self.name_h4}#RS:{self.razon_social}\n',
         f'#\n',
         f' interface {self.interface_type}{self.new_interface}.4002\n',
         f' vlan-type dot1q 4002\n',
-        f' description Conexion con {self.description} Tipo: Acceso\n',
+        f' description LNK:{self.id}#{self.description}<->{self.name_h4}#RS:{self.razon_social} #GESTION\n',
         f' ip binding vpn-instance Mgmt-HL5\n',
         f' ip address unnumbered interface Loopback4002\n',
         f' statistic enable\n',

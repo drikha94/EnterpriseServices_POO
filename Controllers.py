@@ -58,6 +58,7 @@ class Controller:
         self.parameters = parameters
         self.parameters['NEW_INTERFACE'] = int_service
         self.parameters['CABLING_TYPE'] = cabling_type
+        self.parameters['H4_NAME'] = h4_name
         self.possible_peers = []
         self.device_type = device_type
 
@@ -162,11 +163,11 @@ class Controller:
                     clean_policy.get_data_flow_queue(block_list_flow, self.parameters)
         
 
-    def template_management(self, ip_mgmt, device_name, type_cabling, id_service, adred):
+    def template_management(self, ip_mgmt, device_name, type_cabling, id_service, razon_social):
         self.parameters['MANAGEMENT_DATA']['mgmt_ip'] = ip_mgmt if ip_mgmt != "" else 'X.X.X.X'
         self.parameters['MANAGEMENT_DATA']['device_name'] = device_name if device_name != "" else 'DEVICE_NAME'
         self.parameters['MANAGEMENT_DATA']['ID'] = id_service if id_service != "" else 'ID_NUMBER'
-        self.parameters['MANAGEMENT_DATA']['ADRED'] = adred if adred != "" else 'ADRED_NUMBER'
+        self.parameters['MANAGEMENT_DATA']['RAZON_SOCIAL'] = razon_social if razon_social != "" else 'RAZON_SOCIAL'
         template_management_obj = Management_template(self.parameters, self.path_script, headers_template)
         self.read_script = open_txt(self.path_script)
         if not re.findall('# ENTERPRISE SERVICE #', "".join(self.read_script)):

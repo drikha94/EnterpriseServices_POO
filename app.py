@@ -165,7 +165,7 @@ class Main_aplicacion:
                     Label(self.fm_one_top, text="Loopback193", background="#252525", fg= "#C8C8C8").grid(column=0, row=1, padx=5)
                     Label(self.fm_one_top, text="S2300 Name", background="#252525", fg= "#C8C8C8").grid(column=0, row=2, padx=5)
                     Label(self.fm_one_top, text="ID (Path)", background="#252525", fg= "#C8C8C8").grid(column=0, row=3, padx=5)
-                    Label(self.fm_one_top, text="Adred", background="#252525", fg= "#C8C8C8").grid(column=0, row=4, padx=5)
+                    Label(self.fm_one_top, text="Razon Social", background="#252525", fg= "#C8C8C8").grid(column=0, row=4, padx=5)
                     self.e_top_one = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, bg='#252525', fg= "#C8C8C8")
                     self.e_top_one.grid(column=1, row=1, padx=5, pady=5)
                     self.e_top_two = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
@@ -179,7 +179,7 @@ class Main_aplicacion:
                     Label(self.fm_one_top, text="Management data" ,background="#252525", fg= "#C8C8C8").grid(column=0, row=0, columnspan=3, pady=5)
                     Label(self.fm_one_top, text="H5 Name", background="#252525", fg= "#C8C8C8").grid(column=0, row=2, padx=5)
                     Label(self.fm_one_top, text="ID (Path)", background="#252525", fg= "#C8C8C8").grid(column=0, row=3, padx=5)
-                    Label(self.fm_one_top, text="Adred", background="#252525", fg= "#C8C8C8").grid(column=0, row=4, padx=5)
+                    Label(self.fm_one_top, text="Razon Social", background="#252525", fg= "#C8C8C8").grid(column=0, row=4, padx=5)
                     self.e_top_two = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
                     self.e_top_two.grid(column=1, row=2, padx=5, pady=5)
                     self.e_top_tree = Entry(self.fm_one_top, width=14, highlightcolor="red",highlightthickness=1, background='#252525', fg= "#C8C8C8")
@@ -254,20 +254,20 @@ class Main_aplicacion:
         cabling_type = 'FIBER'
         name_service = 'DEVICE_NAME'
         id = 'ID_NUMBER'
-        adred = 'ADRED_NUMBER'
+        razon_social = 'RAZON_SOCIAL'
         ip_mgmt = 'X.X.X.X'
 
         if self.get_device == 'S2300':
             ip_mgmt = self.e_top_one.get().strip()
             name_service = self.e_top_two.get().strip()
             id = self.e_top_tree.get().strip()
-            adred = self.e_top_four.get().strip()
+            razon_social = self.e_top_four.get().strip()
             old_int = self.e_top_five.get().strip()
             new_int = self.e_top_six.get().strip()
 
         if self.get_device == 'ATN':
             id = self.e_top_tree.get().strip()
-            adred=self.e_top_four.get().strip()
+            razon_social=self.e_top_four.get().strip()
             name_service = self.e_top_two.get().strip()
             old_int = self.e_top_five.get().strip()
             new_int = self.e_top_six.get().strip()
@@ -301,7 +301,7 @@ class Main_aplicacion:
             manager_ctls.map_parameters()
             manager_ctls.prefix_parameters()
             manager_ctls.policy_parameters()
-            manager_ctls.template_management(ip_mgmt, name_service, cabling_type, id, adred)
+            manager_ctls.template_management(ip_mgmt, name_service, cabling_type, id, razon_social)
             manager_ctls.template_enterprise(cabling_type)
             manager_ctls.template_display()
             manager_ctls.template_show()

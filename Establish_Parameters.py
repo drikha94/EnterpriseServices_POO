@@ -98,7 +98,9 @@ parameters = {
         'mgmt_ip': 'X.X.X.X',
         'device_name': 'DEVICE_NAME',
         'ID': 'ID_NUMBER',
-        'ADRED': 'ADRED_NUMBER'
+        'ADRED': 'ADRED_NUMBER',
+        'RAZON_SOCIAL': 'RAZON_SOCIAL',
+        'T5_REMOTE_PORT': 'REMOTE_PORT'
     },
     'CABLING_TYPE':'FIBER',
     'H4_PORT_STATE':{
@@ -110,7 +112,8 @@ parameters = {
         'TRAFFIC_IN': '-',
         'TRAFFIC_OUT': '-',
         'STATE': '-'
-    }
+    },
+    'H4_NAME': ''
 }
 
 residential_parameters = {
