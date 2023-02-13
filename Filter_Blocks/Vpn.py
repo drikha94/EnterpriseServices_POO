@@ -28,13 +28,13 @@ class Vpn_filter_block:
 
         block_list = self.main_filter.block(core_list, first_line_filtered, data_type, '!', True, False)
 
-        #if (block_list[0] == patterns['vpn']['p_vpn'][0] + vpn) or (block_list[0] == patterns['vpn']['p_vpn'][1] + vpn):
-        if patterns['id'] == 1:
-            return block_list
+        if (block_list[0] == patterns['vpn']['p_vpn'][0] + vpn) or (block_list[0] == patterns['vpn']['p_vpn'][1] + vpn):
+            if patterns['id'] == 1:
+                return block_list
 
-        if patterns['id'] == 2:
-            rte_first_line = list(filter(lambda x: patterns['vpn']['p_rte'][0] in x, block_list))
-            rti_first_line = list(filter(lambda x: patterns['vpn']['p_rti'][0] in x, block_list))
-            rte_block_list = self.main_filter.block(block_list, rte_first_line, data_type, '!', False, False)
-            rti_block_list = self.main_filter.block(block_list, rti_first_line, data_type, '!', False, False)
-            return [block_list, rte_block_list, rti_block_list]
+            if patterns['id'] == 2:
+                rte_first_line = list(filter(lambda x: patterns['vpn']['p_rte'][0] in x, block_list))
+                rti_first_line = list(filter(lambda x: patterns['vpn']['p_rti'][0] in x, block_list))
+                rte_block_list = self.main_filter.block(block_list, rte_first_line, data_type, '!', False, False)
+                rti_block_list = self.main_filter.block(block_list, rti_first_line, data_type, '!', False, False)
+                return [block_list, rte_block_list, rti_block_list]
